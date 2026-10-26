@@ -23,22 +23,31 @@ export interface MarketConflictResult {
 class TavilyIntegrationClient {
   private client: TavilyClientInstance | null = null;
   private isConfigured: boolean = false;
+  private cachedKey: string | null = null;
 
-  constructor() {
-    const apiKey = process.env.TAVILY_API_KEY;
-    if (apiKey && apiKey.trim().length > 0) {
-      try {
-        this.client = tavily({ apiKey: apiKey.trim() });
-        this.isConfigured = true;
-      } catch (err) {
-        console.warn('Failed to initialize Tavily client:', err);
+  private ensureClient(): TavilyClientInstance | null {
+    const apiKey = process.env.TAVILY_API_KEY?.trim() || null;
+    if (apiKey !== this.cachedKey) {
+      this.cachedKey = apiKey;
+      if (apiKey && apiKey.length > 0) {
+        try {
+          this.client = tavily({ apiKey });
+          this.isConfigured = true;
+        } catch (err) {
+          console.warn('Failed to initialize Tavily client:', err);
+          this.client = null;
+          this.isConfigured = false;
+        }
+      } else {
         this.client = null;
         this.isConfigured = false;
       }
     }
+    return this.client;
   }
 
   public getStatus(): { configured: boolean; message: string } {
+    this.ensureClient();
     return {
       configured: this.isConfigured,
       message: this.isConfigured
@@ -54,11 +63,12 @@ class TavilyIntegrationClient {
     venueName: string,
     city: string
   ): Promise<VenueBookingEnrichment | null> {
-    if (!this.client || !this.isConfigured) return null;
+    const client = this.ensureClient();
+    if (!client || !this.isConfigured) return null;
 
     try {
       const query = `"${venueName}" "${city}" booking talent buyer email contact`;
-      const response = await this.client.search(query, {
+      const response = await client.search(query, {
         searchDepth: 'basic',
         maxResults: 3,
       });
@@ -102,11 +112,12 @@ class TavilyIntegrationClient {
     openerName: string,
     city: string
   ): Promise<OpenerVerificationResult | null> {
-    if (!this.client || !this.isConfigured) return null;
+    const client = this.ensureClient();
+    if (!client || !this.isConfigured) return null;
 
     try {
       const query = `"${openerName}" band music live shows concerts "${city}" 2025 OR 2026`;
-      const response = await this.client.search(query, {
+      const response = await client.search(query, {
         searchDepth: 'basic',
         maxResults: 2,
       });
@@ -137,11 +148,12 @@ class TavilyIntegrationClient {
     city: string,
     dateStr: string
   ): Promise<MarketConflictResult | null> {
-    if (!this.client || !this.isConfigured) return null;
+    const client = this.ensureClient();
+    if (!client || !this.isConfigured) return null;
 
     try {
       const query = `music festival major concerts "${city}" "${dateStr}"`;
-      const response = await this.client.search(query, {
+      const response = await client.search(query, {
         searchDepth: 'basic',
         maxResults: 2,
       });

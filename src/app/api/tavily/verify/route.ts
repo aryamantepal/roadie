@@ -1,7 +1,9 @@
 import { NextResponse } from 'next/server';
+import { io } from 'next/cache';
 import { tavilyClient } from '@/lib/tavily/client';
 
 export async function GET() {
+  await io();
   try {
     const status = tavilyClient.getStatus();
     return NextResponse.json(status);

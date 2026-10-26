@@ -1,7 +1,9 @@
 import { NextResponse } from 'next/server';
+import { io } from 'next/cache';
 import { qlooClient } from '@/lib/qloo/client';
 
 export async function GET() {
+  await io();
   try {
     const diagnostic = await qlooClient.verifyConnection();
     return NextResponse.json(diagnostic);
