@@ -17,10 +17,10 @@ const AGENT_MERMAID_CHART = `flowchart TD
 
     subgraph Tools["3. Deterministic Tools (Preconditions In-Tool)"]
         T1["audience_affinity<br/><b>Qloo API:</b> 250M+ Entity Taste Graph<br/><i>Ranks markets by affinity ratio</i>"]
-        T2["find_venues<br/><b>Ticketmaster & Curated Indie Venues:</b><br/><i>Filters verified room sizes</i>"]
-        T3["local_taste<br/><b>Qloo Cross-Domain Affinities:</b><br/><i>Pairs local openers & cultural spots</i>"]
+        T2["find_venues<br/><b>Ticketmaster & Tavily Live Web:</b><br/><i>Filters rooms & extracts booking emails</i>"]
+        T3["local_taste<br/><b>Qloo Graph & Tavily Verification:</b><br/><i>Pairs active 2026 openers & cultural spots</i>"]
         T4["build_route<br/><b>Deterministic TSP (2-Opt Algorithm):</b><br/><i>Calculates drivable mileage & rest days</i>"]
-        T5["draft_pitch<br/><b>Promoter Pitch Engine:</b><br/><i>Cites local Qloo metrics & synergies</i>"]
+        T5["draft_pitch<br/><b>Promoter Pitch Engine:</b><br/><i>Cites verified metrics & opener synergies</i>"]
     end
 
     subgraph Validation["4. Touring Circuit Breakers"]
@@ -170,11 +170,11 @@ export const ArchitectureView: React.FC = () => {
               </span>
             </div>
             <p style={{ fontSize: '12.5px', color: '#8b949e', lineHeight: 1.5, margin: 0 }}>
-              Filters Ticketmaster Discovery &amp; verified indie database for realistic room sizes (e.g. 200–450 cap clubs).
+              Filters Ticketmaster Discovery &amp; indie database, enriched by Tavily live web search to extract verified talent-buyer emails.
             </p>
             <div style={{ marginTop: '12px', fontSize: '11px', color: '#3fb950', display: 'flex', alignItems: 'center', gap: '6px' }}>
               <CheckCircle2 size={13} />
-              <span>Precondition: Capacity bracket matches band tier</span>
+              <span>Precondition: Capacity tier matched; Tavily talent-buyer lookup</span>
             </div>
           </div>
 
@@ -206,11 +206,11 @@ export const ArchitectureView: React.FC = () => {
               </span>
             </div>
             <p style={{ fontSize: '12.5px', color: '#8b949e', lineHeight: 1.5, margin: 0 }}>
-              Discovers compatible local openers and taste-matched cultural anchors (record stores, coffee shops).
+              Pairs Qloo cross-domain openers and cultural pop-ups, verified via Tavily live web queries to confirm active 2026 performance status.
             </p>
             <div style={{ marginTop: '12px', fontSize: '11px', color: '#3fb950', display: 'flex', alignItems: 'center', gap: '6px' }}>
               <CheckCircle2 size={13} />
-              <span>Precondition: Cross-domain affinity overlap &gt; 65%</span>
+              <span>Precondition: Cross-domain affinity overlap &gt; 65%; live gig status verified</span>
             </div>
           </div>
 

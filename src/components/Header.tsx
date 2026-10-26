@@ -21,6 +21,14 @@ export const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab }) => {
     message: 'Taste Graph Grounded',
   });
 
+  const [tavilyStatus, setTavilyStatus] = useState<{
+    configured: boolean;
+    message: string;
+  }>({
+    configured: false,
+    message: 'Tavily Live Web',
+  });
+
   useEffect(() => {
     fetch('/api/qloo/verify')
       .then((res) => res.json())
@@ -32,6 +40,20 @@ export const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab }) => {
             message: data.configured
               ? 'Qloo Live API'
               : 'Qloo Taste Graph (Grounded)',
+          });
+        }
+      })
+      .catch(() => {
+        // Fallback gracefully
+      });
+
+    fetch('/api/tavily/verify')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data) {
+          setTavilyStatus({
+            configured: data.configured,
+            message: data.configured ? 'Tavily Live Web' : 'Tavily Offline',
           });
         }
       })
@@ -168,8 +190,9 @@ export const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab }) => {
           </button>
         </nav>
 
-        {/* Live Qloo Status Pill */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+        {/* Live Status Indicators */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          {/* Qloo Status */}
           <div
             style={{
               display: 'flex',
@@ -192,6 +215,31 @@ export const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab }) => {
               }}
             />
             <span style={{ color: '#c9d1d9' }}>{qlooStatus.message}</span>
+          </div>
+
+          {/* Tavily Status */}
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              background: '#161b22',
+              border: '1px solid #30363d',
+              padding: '4px 10px',
+              borderRadius: '4px',
+              fontSize: '11.5px',
+              fontFamily: 'ui-monospace, monospace',
+            }}
+          >
+            <span
+              style={{
+                width: '6px',
+                height: '6px',
+                borderRadius: '50%',
+                backgroundColor: tavilyStatus.configured ? '#38bdf8' : '#64748b',
+              }}
+            />
+            <span style={{ color: '#c9d1d9' }}>{tavilyStatus.message}</span>
           </div>
 
           <a

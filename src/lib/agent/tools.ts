@@ -6,6 +6,7 @@ import {
   Venue,
 } from '@/types';
 import { qlooClient } from '@/lib/qloo/client';
+import { tavilyClient } from '@/lib/tavily/client';
 import { findVenuesForMarket } from '@/lib/venues/discovery';
 import { buildTourSchedule, optimizeStopSequence, RouteCandidate } from '@/lib/routing/router';
 
@@ -50,7 +51,21 @@ export async function toolFindVenues(
     throw new Error(`Precondition failed: Invalid capacity tier '${capacityTier}'. Must be club, ballroom, or theater.`);
   }
 
-  return await findVenuesForMarket(city.trim(), state.trim(), capacityTier);
+  const venue = await findVenuesForMarket(city.trim(), state.trim(), capacityTier);
+
+  // Tavily live web enrichment: verify direct talent buyer booking email or portal
+  try {
+    const enrichment = await tavilyClient.enrichVenueBooking(venue.name, venue.city);
+    if (enrichment?.bookingEmail) {
+      venue.bookingContact = `${enrichment.bookingEmail} (Verified via Tavily)`;
+    } else if (enrichment?.bookingUrl) {
+      venue.bookingContact = `Booking: ${enrichment.bookingUrl}`;
+    }
+  } catch {
+    // Fallback safely to existing venue contact
+  }
+
+  return venue;
 }
 
 // Tool 3: local_taste
@@ -66,7 +81,19 @@ export async function toolLocalTaste(
     throw new Error("Precondition failed: 'city' must be provided for cross-domain taste mapping.");
   }
 
-  return await qlooClient.getLocalTaste(artistName.trim(), city.trim());
+  const taste = await qlooClient.getLocalTaste(artistName.trim(), city.trim());
+
+  // Tavily live web verification: confirm local opener is actively gigging in 2026
+  try {
+    const verification = await tavilyClient.verifyOpenerActivity(taste.opener.name, city.trim());
+    if (verification?.recentActivityNote) {
+      taste.opener.rationale = `${taste.opener.rationale} [Tavily Web Verified: ${verification.recentActivityNote}]`;
+    }
+  } catch {
+    // Fallback safely to existing rationale
+  }
+
+  return taste;
 }
 
 // Tool 4: build_route
@@ -121,7 +148,7 @@ export async function toolDraftPitch(
   return `Subject: Tour Hold Inquiry: ${artistName} at ${venue.name} (${venue.city}) - Grounded Affinity Data
 
 Hi ${venue.name} Booking Team,
-
+${venue.bookingContact ? `Contact / Portal: ${venue.bookingContact}\n` : ''}
 I represent ${artistName}. We are routing our upcoming headline tour and are requesting a hold for ${venue.name} (${venue.capacity} cap).
 
 Why this date is a guaranteed sellout in ${market.city}:

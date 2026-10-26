@@ -46,10 +46,10 @@ flowchart TD
 
     subgraph Tools["3. Deterministic Tools (Preconditions In-Tool)"]
         T1["audience_affinity<br/><b>Qloo API:</b> 250M+ Entity Taste Graph<br/><i>Ranks markets by affinity ratio</i>"]
-        T2["find_venues<br/><b>Ticketmaster & Curated Indie Venues:</b><br/><i>Filters verified room sizes</i>"]
-        T3["local_taste<br/><b>Qloo Cross-Domain Affinities:</b><br/><i>Pairs local openers & cultural spots</i>"]
+        T2["find_venues<br/><b>Ticketmaster & Tavily Live Web:</b><br/><i>Filters rooms & extracts booking emails</i>"]
+        T3["local_taste<br/><b>Qloo Graph & Tavily Verification:</b><br/><i>Pairs active 2026 openers & cultural spots</i>"]
         T4["build_route<br/><b>Deterministic TSP (2-Opt Algorithm):</b><br/><i>Calculates drivable mileage & rest days</i>"]
-        T5["draft_pitch<br/><b>Promoter Pitch Engine:</b><br/><i>Cites local Qloo metrics & synergies</i>"]
+        T5["draft_pitch<br/><b>Promoter Pitch Engine:</b><br/><i>Cites verified metrics & opener synergies</i>"]
     end
 
     subgraph Validation["4. Touring Circuit Breakers"]
@@ -167,6 +167,7 @@ BASE_URL=https://roadie-seven-mu.vercel.app npx playwright test
 
 - **Framework:** Next.js 16 (App Router, React 19, TypeScript)
 - **Cultural Intelligence:** Qloo API (Location Heatmaps, Cross-Domain Affinity)
+- **Live Web Intelligence:** Tavily Search API (Talent Buyer Contact Extraction & Opener Verification)
 - **Venue Discovery:** Ticketmaster Discovery API + Curated Indie Network
 - **Routing Engine:** Deterministic Haversine & 2-Opt TSP Optimizer
 - **Diagrams:** Mermaid.js client-side interactive rendering
