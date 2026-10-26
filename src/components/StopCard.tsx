@@ -8,6 +8,8 @@ import {
   ShoppingBag,
   Car,
   Mail,
+  AlertTriangle,
+  CheckCircle2,
 } from 'lucide-react';
 
 interface StopCardProps {
@@ -251,6 +253,36 @@ export const StopCard: React.FC<StopCardProps> = ({
               {taste.popUpSpot.culturalMatch}
             </div>
           </div>
+        </div>
+      )}
+
+      {/* Market Event Conflict Check */}
+      {stop.marketConflict && (
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            padding: '7px 10px',
+            borderRadius: '5px',
+            marginBottom: '12px',
+            fontSize: '11px',
+            backgroundColor: stop.marketConflict.hasConflict ? '#2b1b17' : '#0e1d17',
+            border: stop.marketConflict.hasConflict ? '1px solid #78350f' : '1px solid #14532d',
+            color: stop.marketConflict.hasConflict ? '#fde68a' : '#86efac',
+          }}
+        >
+          {stop.marketConflict.hasConflict ? (
+            <AlertTriangle size={13} color="#f59e0b" style={{ flexShrink: 0 }} />
+          ) : (
+            <CheckCircle2 size={13} color="#22c55e" style={{ flexShrink: 0 }} />
+          )}
+          <span style={{ lineHeight: 1.3 }}>
+            {stop.marketConflict.conflictSummary ||
+              (stop.marketConflict.hasConflict
+                ? 'Potential festival counter-programming detected.'
+                : 'Market clear: No major festival conflicts.')}
+          </span>
         </div>
       )}
 

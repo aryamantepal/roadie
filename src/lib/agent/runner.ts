@@ -14,6 +14,7 @@ import {
   toolLocalTaste,
 } from './tools';
 import { RouteCandidate } from '@/lib/routing/router';
+import { tavilyClient } from '@/lib/tavily/client';
 
 export class RoadieAgent {
   /**
@@ -96,6 +97,12 @@ export class RoadieAgent {
         // Tool 3: Local Taste
         const localTaste = await toolLocalTaste(input.name, stop.city);
         stop.localTaste = localTaste;
+
+        // Market Event Conflict Check (Tavily Live Web / Market Calendar)
+        const conflict = await tavilyClient.checkMarketConflicts(stop.city, stop.date);
+        if (conflict) {
+          stop.marketConflict = conflict;
+        }
 
         // Tool 5: Draft Pitch
         const pitchEmail = await toolDraftPitch(

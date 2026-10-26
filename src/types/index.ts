@@ -58,6 +58,12 @@ export interface LocalTaste {
   popUpSpot: PopUpSpot;
 }
 
+export interface MarketConflict {
+  hasConflict: boolean;
+  conflictSummary?: string;
+  sourceUrl?: string;
+}
+
 export interface TourStop {
   stopNumber: number;
   date: string;
@@ -70,6 +76,7 @@ export interface TourStop {
   venue?: Venue;
   affinityMarket?: AffinityMarket;
   localTaste?: LocalTaste;
+  marketConflict?: MarketConflict;
   driveDistanceMiles: number;
   driveHours: number;
   notes?: string;
