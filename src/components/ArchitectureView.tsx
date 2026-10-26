@@ -5,50 +5,52 @@ import { MermaidDiagram } from './MermaidDiagram';
 import { Shield, CheckCircle2 } from 'lucide-react';
 
 const AGENT_MERMAID_CHART = `flowchart TD
-    subgraph Inputs["1. Tour Request & Bounds"]
-        In1["Artist & Genre Profile"]
-        In2["Date Window & Target Corridor"]
-        In3["Capacity Tier (e.g. 250-cap club)"]
+    classDef inputStyle fill:#161b22,stroke:#30363d,stroke-width:1px,color:#f0f6fc;
+    classDef agentStyle fill:#162438,stroke:#38bdf8,stroke-width:2px,color:#f0f6fc;
+    classDef toolStyle fill:#161b22,stroke:#38bdf8,stroke-width:1px,color:#f0f6fc;
+    classDef guardStyle fill:#211d13,stroke:#d97706,stroke-width:1px,color:#fde68a;
+    classDef outStyle fill:#122319,stroke:#238636,stroke-width:1px,color:#7ee787;
+
+    subgraph Step1 ["1. Input Parameters & Constraints"]
+        direction LR
+        A["Artist & Genre Profile<br/>(e.g. Geese • Post-Punk)"]:::inputStyle
+        B["Date Window & Target Corridor<br/>(e.g. US-East, Nov 6–20)"]:::inputStyle
+        C["Room Size Tier<br/>(Club: 200–450 cap)"]:::inputStyle
     end
 
-    subgraph Core["2. ReAct Agent Loop"]
-        Orch["Agent Orchestrator (Typed State Machine)"]
+    subgraph Step2 ["2. ReAct Agent Core"]
+        Orch["Tour Routing Orchestrator<br/>State Machine & Precondition Validator"]:::agentStyle
     end
 
-    subgraph Tools["3. Deterministic Tools (Preconditions In-Tool)"]
-        T1["audience_affinity<br/><b>Qloo API:</b> 250M+ Entity Taste Graph<br/><i>Ranks markets by affinity ratio</i>"]
-        T2["find_venues<br/><b>Ticketmaster & Tavily Live Web:</b><br/><i>Filters rooms & extracts booking emails</i>"]
-        T3["local_taste<br/><b>Qloo Graph & Tavily Verification:</b><br/><i>Pairs active 2026 openers & cultural spots</i>"]
-        T4["build_route<br/><b>Deterministic TSP (2-Opt Algorithm):</b><br/><i>Calculates drivable mileage & rest days</i>"]
-        T5["draft_pitch<br/><b>Promoter Pitch Engine:</b><br/><i>Cites verified metrics & opener synergies</i>"]
+    subgraph Step3 ["3. Deterministic Tool Pipeline (In-Tool Preconditions)"]
+        direction LR
+        T1["Tool 1: audience_affinity<br/><b>Qloo API:</b> 250M+ Entity Taste Graph<br/>Ranks markets by affinity ratio"]:::toolStyle
+        T2["Tool 2: find_venues<br/><b>Ticketmaster & Tavily Live Web:</b><br/>Filters rooms & extracts booking emails"]:::toolStyle
+        T3["Tool 3: local_taste<br/><b>Qloo Graph & Tavily Verification:</b><br/>Pairs active openers & culture pop-ups"]:::toolStyle
+        T4["Tool 4: build_route<br/><b>Deterministic TSP (2-Opt Algorithm):</b><br/>Calculates drivable mileage & rest cadence"]:::toolStyle
+        T5["Tool 5: draft_pitch<br/><b>Promoter Pitch Engine:</b><br/>Embeds talent-buyer emails & affinity data"]:::toolStyle
+        
+        T1 --> T2 --> T3 --> T4 --> T5
     end
 
-    subgraph Validation["4. Touring Circuit Breakers"]
-        V1["Max Daily Drive: 320 miles"]
-        V2["Rest Cadence: Max 3 consecutive shows"]
-        V3["Market Radius: Min 45 mi between stops"]
+    subgraph Step4 ["4. Physical Touring Circuit Breakers"]
+        direction LR
+        G1["Daily Transit Limit<br/>Max 320 miles/day (5.5h drive)"]:::guardStyle
+        G2["Band Health & Rest Cadence<br/>Mandatory off-day every 3 shows"]:::guardStyle
+        G3["Market Cannibalization Guard<br/>Min 45 mi radius between stops"]:::guardStyle
     end
 
-    subgraph Artifacts["5. Tour Execution Artifacts"]
-        Out1["Day-by-Day Route Itinerary"]
-        Out2["Geographic Drive-Time Map"]
-        Out3["Promoter Pitch Packets with Qloo Data"]
+    subgraph Step5 ["5. Verified Tour Execution Artifacts"]
+        direction LR
+        O1["Day-by-Day Van Itinerary<br/>Route sequence & venue times"]:::outStyle
+        O2["Geographic Drive-Time Map<br/>Interactive SVG corridor path"]:::outStyle
+        O3["Data-Backed Promoter Pitch Emails<br/>Citing Qloo index & opener synergies"]:::outStyle
     end
 
-    Inputs --> Orch
-    Orch -->|Step 1: Rank Markets| T1
-    T1 -.->|Affinity Scores| Orch
-    Orch -->|Step 2: Match Venues| T2
-    T2 -.->|Verified Rooms| Orch
-    Orch -->|Step 3: Cultural Context| T3
-    T3 -.->|Openers & Pop-ups| Orch
-    Orch -->|Step 4: Optimize Sequence| T4
-    T4 --> Validation
-    Validation -->|Verified Routing| Orch
-    Orch -->|Step 5: Generate Pitches| T5
-    T5 -.->|Pitch Emails| Out3
-    Orch --> Out1
-    Orch --> Out2
+    Step1 --> Step2
+    Step2 --> Step3
+    Step3 --> Step4
+    Step4 --> Step5
 `;
 
 export const ArchitectureView: React.FC = () => {
