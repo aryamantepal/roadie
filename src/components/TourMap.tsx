@@ -19,15 +19,13 @@ export const TourMap: React.FC<TourMapProps> = ({
   const height = 480;
 
   // Geographic bounds for continental US & Southern Canada projection
-  // Longitude: -125 (West) to -68 (East)
-  // Latitude: 24 (South) to 50 (North)
   const minLng = -125;
   const maxLng = -68;
   const minLat = 24;
   const maxLat = 50;
 
   const projectCoords = (lat: number, lng: number): { x: number; y: number } => {
-    // Albers-like pseudo-conic projection for realistic North American curvature
+    // Albers-like pseudo-conic projection for North American curvature
     const normX = (lng - minLng) / (maxLng - minLng);
     const normY = (maxLat - lat) / (maxLat - minLat);
 
@@ -53,12 +51,11 @@ export const TourMap: React.FC<TourMapProps> = ({
       style={{
         position: 'relative',
         width: '100%',
-        backgroundColor: '#0c111a',
-        borderRadius: '16px',
-        border: '1px solid rgba(255, 255, 255, 0.08)',
+        backgroundColor: '#161b22',
+        borderRadius: '8px',
+        border: '1px solid #30363d',
         padding: '16px',
         overflow: 'hidden',
-        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4)',
       }}
     >
       {/* Top Map Bar */}
@@ -68,36 +65,35 @@ export const TourMap: React.FC<TourMapProps> = ({
           justifyContent: 'space-between',
           alignItems: 'center',
           marginBottom: '12px',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.06)',
+          borderBottom: '1px solid #21262d',
           paddingBottom: '10px',
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <span
             style={{
-              width: '8px',
-              height: '8px',
+              width: '7px',
+              height: '7px',
               borderRadius: '50%',
-              backgroundColor: '#10b981',
-              boxShadow: '0 0 10px #10b981',
+              backgroundColor: '#3fb950',
             }}
           />
-          <span style={{ fontSize: '13px', fontWeight: 600, color: '#e2e8f0', letterSpacing: '0.04em' }}>
-            DETERMINISTIC TOUR ROUTE
+          <span style={{ fontSize: '12px', fontWeight: 600, color: '#f0f6fc', fontFamily: 'ui-monospace, monospace' }}>
+            DETERMINISTIC ROUTE MAP
           </span>
         </div>
-        <div style={{ display: 'flex', gap: '16px', fontSize: '12px', color: '#94a3b8' }}>
+        <div style={{ display: 'flex', gap: '14px', fontSize: '11.5px', color: '#8b949e' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#8b5cf6' }} />
+            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#38bdf8' }} />
             <span>Show Date</span>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#f59e0b' }} />
-            <span>Travel / Off-Day</span>
+            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#fbbf24' }} />
+            <span>Transit / Rest Day</span>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <span style={{ width: '20px', height: '2px', background: '#06b6d4' }} />
-            <span>Drivable Path</span>
+            <span style={{ width: '16px', height: '2px', background: '#3b82f6' }} />
+            <span>Drive Path</span>
           </div>
         </div>
       </div>
@@ -119,76 +115,60 @@ export const TourMap: React.FC<TourMapProps> = ({
                 strokeWidth="1"
               />
             </pattern>
-            <linearGradient id="routeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#8b5cf6" stopOpacity="0.9" />
-              <stop offset="50%" stopColor="#06b6d4" stopOpacity="0.9" />
-              <stop offset="100%" stopColor="#10b981" stopOpacity="0.9" />
-            </linearGradient>
-            <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-              <feGaussianBlur stdDeviation="4" result="blur" />
-              <feComposite in="SourceGraphic" in2="blur" operator="over" />
-            </filter>
           </defs>
 
-          {/* Grid Background */}
-          <rect width={width} height={height} fill="url(#grid)" />
+          {/* Background Map Grid */}
+          <rect width={width} height={height} fill="#0d1117" rx="6" />
+          <rect width={width} height={height} fill="url(#grid)" rx="6" />
 
-          {/* Outline Guides for major regions */}
+          {/* North American Outline Reference */}
           <path
-            d="M 120 180 Q 250 140 450 130 T 780 140 Q 820 280 720 380 Q 550 420 320 400 Z"
-            fill="rgba(14, 22, 36, 0.45)"
-            stroke="rgba(255, 255, 255, 0.04)"
+            d="M 120 70 Q 280 50, 480 80 T 800 120 L 820 180 Q 780 220, 790 300 T 730 420 Q 640 430, 520 420 T 360 410 Q 240 370, 150 330 T 100 200 Z"
+            fill="none"
+            stroke="rgba(255, 255, 255, 0.05)"
             strokeWidth="1.5"
+            strokeDasharray="4 4"
           />
 
-          {/* Connecting Tour Route Line */}
+          {/* Connecting Transit Route Path */}
           {pathD && (
             <>
-              {/* Glowing under-line */}
+              {/* Clean solid path line */}
               <path
                 d={pathD}
                 fill="none"
-                stroke="#06b6d4"
-                strokeWidth="4"
-                strokeOpacity="0.25"
-                filter="url(#glow)"
-              />
-              {/* Crisp main line */}
-              <path
-                d={pathD}
-                fill="none"
-                stroke="url(#routeGradient)"
+                stroke="#2563eb"
                 strokeWidth="2.5"
-                strokeDasharray="6 3"
+                strokeLinecap="round"
+                strokeLinejoin="round"
               />
             </>
           )}
 
-          {/* Tour Stop Markers */}
-          {stops.map((stop, index) => {
+          {/* Stop Pins and Markers */}
+          {stops.map((stop, idx) => {
             const pt = projectCoords(stop.lat, stop.lng);
-            const isSelected = selectedStopIndex === index;
+            const isSelected = selectedStopIndex === idx;
             const isOff = stop.isOffDay;
-            const color = isOff ? '#f59e0b' : '#8b5cf6';
+            const color = isOff ? '#fbbf24' : '#38bdf8';
 
             return (
               <g
                 key={stop.stopNumber}
-                id={`map-stop-pin-${stop.stopNumber}`}
-                onClick={() => onSelectStop(index)}
+                onClick={() => onSelectStop(idx)}
                 style={{ cursor: 'pointer' }}
+                id={`map-pin-stop-${stop.stopNumber}`}
               >
-                {/* Outer selection ring */}
+                {/* Selection indicator */}
                 {isSelected && (
                   <circle
                     cx={pt.x}
                     cy={pt.y}
-                    r="16"
+                    r="15"
                     fill="none"
-                    stroke="#06b6d4"
-                    strokeWidth="2"
+                    stroke="#38bdf8"
+                    strokeWidth="1.5"
                     strokeOpacity="0.8"
-                    className="animate-pulse-glow"
                   />
                 )}
 
@@ -196,23 +176,22 @@ export const TourMap: React.FC<TourMapProps> = ({
                 <circle
                   cx={pt.x}
                   cy={pt.y}
-                  r={isOff ? 6 : 9}
-                  fill={isOff ? '#1e293b' : color}
+                  r={isOff ? 5 : 8}
+                  fill={isOff ? '#161b22' : color}
                   stroke={color}
-                  strokeWidth={isOff ? 2 : 2.5}
-                  filter={isSelected ? 'url(#glow)' : undefined}
+                  strokeWidth={isOff ? 1.5 : 2}
                 />
 
-                {/* Inner dot or stop number */}
+                {/* Stop number */}
                 {!isOff && (
                   <text
                     x={pt.x}
                     y={pt.y + 3.5}
                     textAnchor="middle"
-                    fill="#ffffff"
+                    fill="#0d1117"
                     fontSize="9px"
                     fontWeight="700"
-                    fontFamily="Outfit, sans-serif"
+                    fontFamily="ui-monospace, monospace"
                     pointerEvents="none"
                   >
                     {stop.stopNumber}
@@ -222,13 +201,12 @@ export const TourMap: React.FC<TourMapProps> = ({
                 {/* City Label */}
                 <text
                   x={pt.x}
-                  y={pt.y - 12}
+                  y={pt.y - 11}
                   textAnchor="middle"
-                  fill={isSelected ? '#38bdf8' : isOff ? '#94a3b8' : '#e2e8f0'}
-                  fontSize={isSelected ? '12px' : '10px'}
-                  fontWeight={isSelected ? '700' : '600'}
-                  fontFamily="Plus Jakarta Sans, sans-serif"
-                  style={{ textShadow: '0 2px 6px rgba(0, 0, 0, 0.9)' }}
+                  fill={isSelected ? '#38bdf8' : isOff ? '#8b949e' : '#f0f6fc'}
+                  fontSize={isSelected ? '11.5px' : '9.5px'}
+                  fontWeight={isSelected ? '700' : '500'}
+                  fontFamily="ui-sans-serif, system-ui, sans-serif"
                 >
                   {isOff ? 'REST / DRIVE' : stop.city}
                 </text>
