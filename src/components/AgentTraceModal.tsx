@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { AgentTraceStep } from '@/types';
-import { Terminal, CheckCircle2, Clock, X, Cpu } from 'lucide-react';
+import { Terminal, CheckCircle2, Clock, X } from 'lucide-react';
 
 interface AgentTraceModalProps {
   trace: AgentTraceStep[];
@@ -23,7 +23,6 @@ export const AgentTraceModal: React.FC<AgentTraceModalProps> = ({
         position: 'fixed',
         inset: 0,
         backgroundColor: 'rgba(0, 0, 0, 0.75)',
-        backdropFilter: 'blur(8px)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -40,10 +39,10 @@ export const AgentTraceModal: React.FC<AgentTraceModalProps> = ({
           maxHeight: '85vh',
           display: 'flex',
           flexDirection: 'column',
-          backgroundColor: '#0c1017',
-          border: '1px solid rgba(139, 92, 246, 0.3)',
-          borderRadius: '16px',
-          boxShadow: '0 20px 50px rgba(0, 0, 0, 0.8)',
+          backgroundColor: '#161b22',
+          border: '1px solid #30363d',
+          borderRadius: '8px',
+          boxShadow: '0 10px 30px rgba(0, 0, 0, 0.6)',
           overflow: 'hidden',
         }}
         onClick={(e) => e.stopPropagation()}
@@ -52,22 +51,22 @@ export const AgentTraceModal: React.FC<AgentTraceModalProps> = ({
         {/* Header */}
         <div
           style={{
-            padding: '18px 24px',
-            borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+            padding: '14px 20px',
+            borderBottom: '1px solid #21262d',
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            backgroundColor: '#101522',
+            backgroundColor: '#0d1117',
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <Cpu size={20} color="#8b5cf6" />
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Terminal size={16} color="#38bdf8" />
             <div>
-              <h3 style={{ fontSize: '17px', fontWeight: 700, color: '#ffffff' }}>
-                Roadie Agent Execution Trace
+              <h3 style={{ fontSize: '14px', fontWeight: 600, color: '#f0f6fc', margin: 0 }}>
+                Agent Tool Execution Trace
               </h3>
-              <p style={{ fontSize: '12px', color: '#94a3b8' }}>
-                5 thin tools with internal precondition enforcement
+              <p style={{ fontSize: '11.5px', color: '#8b949e', margin: 0 }}>
+                5 thin tools with internal precondition verification
               </p>
             </div>
           </div>
@@ -77,34 +76,34 @@ export const AgentTraceModal: React.FC<AgentTraceModalProps> = ({
             id="btn-close-trace-modal"
             style={{
               background: 'transparent',
-              color: '#94a3b8',
-              padding: '6px',
-              borderRadius: '6px',
+              color: '#8b949e',
+              padding: '4px',
+              borderRadius: '4px',
             }}
           >
-            <X size={20} />
+            <X size={18} />
           </button>
         </div>
 
         {/* Trace List */}
         <div
           style={{
-            padding: '20px 24px',
+            padding: '16px 20px',
             overflowY: 'auto',
             flex: 1,
             display: 'flex',
             flexDirection: 'column',
-            gap: '14px',
+            gap: '10px',
           }}
         >
           {trace.map((step, idx) => (
             <div
               key={idx}
               style={{
-                backgroundColor: 'rgba(255, 255, 255, 0.02)',
-                border: '1px solid rgba(255, 255, 255, 0.06)',
-                borderRadius: '10px',
-                padding: '14px 16px',
+                backgroundColor: '#0d1117',
+                border: '1px solid #21262d',
+                borderRadius: '6px',
+                padding: '12px 14px',
               }}
             >
               <div
@@ -118,12 +117,13 @@ export const AgentTraceModal: React.FC<AgentTraceModalProps> = ({
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <span
                     style={{
-                      fontFamily: 'monospace',
-                      fontSize: '12px',
-                      fontWeight: 700,
-                      color: '#a78bfa',
-                      background: 'rgba(139, 92, 246, 0.15)',
-                      padding: '2px 8px',
+                      fontFamily: 'ui-monospace, monospace',
+                      fontSize: '11px',
+                      fontWeight: 600,
+                      color: '#58a6ff',
+                      background: 'rgba(56, 139, 253, 0.1)',
+                      border: '1px solid rgba(56, 139, 253, 0.25)',
+                      padding: '2px 6px',
                       borderRadius: '4px',
                     }}
                   >
@@ -134,13 +134,13 @@ export const AgentTraceModal: React.FC<AgentTraceModalProps> = ({
                       display: 'flex',
                       alignItems: 'center',
                       gap: '4px',
-                      color: '#10b981',
+                      color: '#3fb950',
                       fontSize: '11px',
                       fontWeight: 600,
                     }}
                   >
-                    <CheckCircle2 size={13} />
-                    <span>Preconditions Passed</span>
+                    <CheckCircle2 size={12} />
+                    <span>Preconditions Verified</span>
                   </div>
                 </div>
 
@@ -150,27 +150,29 @@ export const AgentTraceModal: React.FC<AgentTraceModalProps> = ({
                     alignItems: 'center',
                     gap: '4px',
                     fontSize: '11px',
-                    color: '#64748b',
+                    color: '#6e7681',
+                    fontFamily: 'ui-monospace, monospace',
                   }}
                 >
-                  <Clock size={12} />
+                  <Clock size={11} />
                   <span>{step.durationMs}ms</span>
                 </div>
               </div>
 
-              <p style={{ fontSize: '13px', color: '#cbd5e1', lineHeight: '1.5' }}>
+              <p style={{ fontSize: '12.5px', color: '#c9d1d9', lineHeight: 1.5, margin: 0 }}>
                 {step.outputSummary}
               </p>
 
               <div
                 style={{
                   marginTop: '8px',
-                  fontFamily: 'monospace',
+                  fontFamily: 'ui-monospace, monospace',
                   fontSize: '11px',
-                  color: '#94a3b8',
-                  background: 'rgba(0, 0, 0, 0.3)',
-                  padding: '6px 10px',
-                  borderRadius: '6px',
+                  color: '#8b949e',
+                  background: '#161b22',
+                  border: '1px solid #21262d',
+                  padding: '6px 8px',
+                  borderRadius: '4px',
                 }}
               >
                 input: {JSON.stringify(step.input)}

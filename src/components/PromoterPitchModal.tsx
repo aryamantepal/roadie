@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { TourStop } from '@/types';
-import { Mail, Copy, Check, X, Sparkles, Building2, TrendingUp } from 'lucide-react';
+import { Mail, Copy, Check, X, Building2, TrendingUp } from 'lucide-react';
 
 interface PromoterPitchModalProps {
   stop: TourStop | null;
@@ -23,7 +23,7 @@ export const PromoterPitchModal: React.FC<PromoterPitchModalProps> = ({
     if (stop.pitchEmail) {
       navigator.clipboard.writeText(stop.pitchEmail);
       setCopied(true);
-      setTimeout(() => setCopied(false), 2500);
+      setTimeout(() => setCopied(false), 2000);
     }
   };
 
@@ -36,7 +36,6 @@ export const PromoterPitchModal: React.FC<PromoterPitchModalProps> = ({
         position: 'fixed',
         inset: 0,
         backgroundColor: 'rgba(0, 0, 0, 0.75)',
-        backdropFilter: 'blur(8px)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -53,10 +52,10 @@ export const PromoterPitchModal: React.FC<PromoterPitchModalProps> = ({
           maxHeight: '90vh',
           display: 'flex',
           flexDirection: 'column',
-          backgroundColor: '#0f141f',
-          border: '1px solid rgba(139, 92, 246, 0.3)',
-          borderRadius: '16px',
-          boxShadow: '0 20px 50px rgba(0, 0, 0, 0.8), 0 0 30px rgba(139, 92, 246, 0.2)',
+          backgroundColor: '#161b22',
+          border: '1px solid #30363d',
+          borderRadius: '8px',
+          boxShadow: '0 10px 30px rgba(0, 0, 0, 0.6)',
           overflow: 'hidden',
         }}
         onClick={(e) => e.stopPropagation()}
@@ -65,35 +64,22 @@ export const PromoterPitchModal: React.FC<PromoterPitchModalProps> = ({
         {/* Header */}
         <div
           style={{
-            padding: '20px 24px',
-            borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+            padding: '16px 20px',
+            borderBottom: '1px solid #21262d',
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            background: 'linear-gradient(90deg, rgba(139, 92, 246, 0.1), transparent)',
+            backgroundColor: '#0d1117',
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <div
-              style={{
-                width: '36px',
-                height: '36px',
-                borderRadius: '8px',
-                backgroundColor: 'rgba(139, 92, 246, 0.2)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: '#c4b5fd',
-              }}
-            >
-              <Mail size={18} />
-            </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Mail size={16} color="#38bdf8" />
             <div>
-              <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#ffffff' }}>
+              <h3 style={{ fontSize: '15px', fontWeight: 600, color: '#f0f6fc', margin: 0 }}>
                 Promoter Pitch Email
               </h3>
-              <p style={{ fontSize: '12px', color: '#94a3b8' }}>
-                {stop.city}, {stop.state} • {venue?.name}
+              <p style={{ fontSize: '12px', color: '#8b949e', margin: 0 }}>
+                {artistName} • {stop.city}, {stop.state} • {venue?.name}
               </p>
             </div>
           </div>
@@ -103,62 +89,59 @@ export const PromoterPitchModal: React.FC<PromoterPitchModalProps> = ({
             id="btn-close-pitch-modal"
             style={{
               background: 'transparent',
-              color: '#94a3b8',
-              padding: '6px',
-              borderRadius: '6px',
+              color: '#8b949e',
+              padding: '4px',
+              borderRadius: '4px',
             }}
           >
-            <X size={20} />
+            <X size={18} />
           </button>
         </div>
 
         {/* Intelligence highlights bar */}
         <div
           style={{
-            padding: '12px 24px',
-            backgroundColor: 'rgba(255, 255, 255, 0.02)',
-            borderBottom: '1px solid rgba(255, 255, 255, 0.06)',
+            padding: '10px 20px',
+            backgroundColor: '#161d2b',
+            borderBottom: '1px solid #212836',
             display: 'flex',
             flexWrap: 'wrap',
-            gap: '12px',
+            gap: '14px',
             fontSize: '12px',
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#c4b5fd' }}>
-            <Building2 size={14} />
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#c9d1d9' }}>
+            <Building2 size={13} color="#8b949e" />
             <span>Target: {venue?.capacity} Cap Room</span>
           </div>
           {market && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#34d399' }}>
-              <TrendingUp size={14} />
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#34d399', fontFamily: 'ui-monospace, monospace' }}>
+              <TrendingUp size={13} />
               <span>Qloo Affinity: {market.affinityScore}/100 (+{Math.round((market.indexRatio - 1) * 100)}%)</span>
             </div>
           )}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#67e8f9' }}>
-            <Sparkles size={14} />
-            <span>Co-bill & Pop-up Aligned</span>
-          </div>
         </div>
 
         {/* Email body container */}
         <div
           style={{
-            padding: '24px',
+            padding: '20px',
             overflowY: 'auto',
             flex: 1,
           }}
         >
           <pre
             style={{
-              fontFamily: 'inherit',
+              fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
               whiteSpace: 'pre-wrap',
-              fontSize: '13.5px',
-              lineHeight: '1.65',
-              color: '#e2e8f0',
-              background: '#090d14',
-              padding: '18px',
-              borderRadius: '10px',
-              border: '1px solid rgba(255, 255, 255, 0.06)',
+              fontSize: '12.5px',
+              lineHeight: 1.6,
+              color: '#f0f6fc',
+              background: '#0d1117',
+              padding: '16px',
+              borderRadius: '6px',
+              border: '1px solid #212836',
+              margin: 0,
             }}
           >
             {stop.pitchEmail}
@@ -168,16 +151,16 @@ export const PromoterPitchModal: React.FC<PromoterPitchModalProps> = ({
         {/* Footer with copy button */}
         <div
           style={{
-            padding: '16px 24px',
-            borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+            padding: '12px 20px',
+            borderTop: '1px solid #21262d',
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            backgroundColor: '#0c1018',
+            backgroundColor: '#0d1117',
           }}
         >
-          <span style={{ fontSize: '12px', color: '#64748b' }}>
-            Backed by Qloo Taste Graph cultural metrics
+          <span style={{ fontSize: '11.5px', color: '#6e7681' }}>
+            Cites local Qloo affinity metrics, opener synergies, and ticket estimates
           </span>
 
           <button
@@ -185,18 +168,18 @@ export const PromoterPitchModal: React.FC<PromoterPitchModalProps> = ({
             className="btn-primary"
             id="btn-copy-pitch-email"
             style={{
-              fontSize: '13px',
-              padding: '8px 18px',
+              fontSize: '12.5px',
+              padding: '6px 14px',
             }}
           >
             {copied ? (
               <>
-                <Check size={16} />
-                <span>Copied to Clipboard!</span>
+                <Check size={14} />
+                <span>Copied to Clipboard</span>
               </>
             ) : (
               <>
-                <Copy size={16} />
+                <Copy size={14} />
                 <span>Copy Pitch Email</span>
               </>
             )}

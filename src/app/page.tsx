@@ -11,15 +11,8 @@ import { ReceiptsView } from '@/components/ReceiptsView';
 import { ArchitectureView } from '@/components/ArchitectureView';
 import { ArtistInput, TourPlan, TourStop } from '@/types';
 import {
-  Car,
-  Compass,
-  Calendar,
-  Flame,
-  Award,
-  Terminal,
   Activity,
-  Layers,
-  Sparkles,
+  Terminal,
 } from 'lucide-react';
 
 export default function Home() {
@@ -30,18 +23,7 @@ export default function Home() {
   const [pitchModalStop, setPitchModalStop] = useState<TourStop | null>(null);
   const [isTraceModalOpen, setIsTraceModalOpen] = useState<boolean>(false);
 
-  // Initial load: automatically plan for "Geese"
-  useEffect(() => {
-    handlePlanTour({
-      name: 'Geese',
-      startDate: '2026-11-06',
-      endDate: '2026-11-20',
-      region: 'US-East',
-      capacityTier: 'club',
-    });
-  }, []);
-
-  const handlePlanTour = async (input: ArtistInput) => {
+  const handlePlanTour = React.useCallback(async (input: ArtistInput) => {
     setIsLoading(true);
     try {
       const res = await fetch('/api/plan', {
@@ -62,17 +44,47 @@ export default function Home() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
+
+  // Initial load: automatically plan for "Geese"
+  useEffect(() => {
+    let ignore = false;
+    fetch('/api/plan', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: 'Geese',
+        startDate: '2026-11-06',
+        endDate: '2026-11-20',
+        region: 'US-East',
+        capacityTier: 'club',
+      }),
+    })
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data: TourPlan | null) => {
+        if (data && !ignore) {
+          setTourPlan(data);
+          setSelectedStopIndex(0);
+        }
+      })
+      .catch((err) => {
+        console.error('Error loading initial plan:', err);
+      });
+
+    return () => {
+      ignore = true;
+    };
+  }, []);
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', backgroundColor: '#090d13' }}>
       <Header activeTab={activeTab} setActiveTab={setActiveTab} />
 
       <main
         style={{
           maxWidth: '1380px',
           margin: '0 auto',
-          padding: '28px 24px 60px',
+          padding: '24px 24px 60px',
           width: '100%',
           flex: 1,
         }}
@@ -81,13 +93,13 @@ export default function Home() {
           <div
             style={{
               display: 'grid',
-              gridTemplateColumns: 'minmax(340px, 420px) 1fr',
-              gap: '28px',
+              gridTemplateColumns: 'minmax(340px, 400px) 1fr',
+              gap: '24px',
               alignItems: 'start',
             }}
           >
             {/* Left Column: Input Form & Tour Metrics */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               <TourForm isLoading={isLoading} onPlanTour={handlePlanTour} />
 
               {/* Tour Plan Metrics Summary Card */}
@@ -96,20 +108,34 @@ export default function Home() {
                   className="glass-panel"
                   id="tour-metrics-summary-card"
                   style={{
-                    padding: '22px',
+                    padding: '18px 20px',
                     display: 'flex',
                     flexDirection: 'column',
-                    gap: '16px',
+                    gap: '14px',
+                    backgroundColor: '#161b22',
+                    border: '1px solid #30363d',
+                    borderRadius: '8px',
                   }}
                 >
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <Activity size={18} color="#10b981" />
-                      <h3 style={{ fontSize: '16px', fontWeight: 700, color: '#ffffff' }}>
-                        Tour Route Diagnostics
+                      <Activity size={16} color="#38bdf8" />
+                      <h3 style={{ fontSize: '14px', fontWeight: 600, color: '#f0f6fc', margin: 0 }}>
+                        Route Optimization Metrics
                       </h3>
                     </div>
-                    <span className="badge badge-emerald">
+                    <span
+                      style={{
+                        fontFamily: 'ui-monospace, monospace',
+                        fontSize: '11px',
+                        fontWeight: 600,
+                        color: '#34d399',
+                        background: 'rgba(52, 211, 153, 0.1)',
+                        padding: '2px 8px',
+                        borderRadius: '4px',
+                        border: '1px solid rgba(52, 211, 153, 0.25)',
+                      }}
+                    >
                       {tourPlan.efficiencyScore}% Efficiency
                     </span>
                   </div>
@@ -118,62 +144,64 @@ export default function Home() {
                     style={{
                       display: 'grid',
                       gridTemplateColumns: '1fr 1fr',
-                      gap: '12px',
+                      gap: '10px',
                     }}
                   >
                     <div
                       style={{
-                        background: 'rgba(255, 255, 255, 0.03)',
-                        borderRadius: '10px',
-                        padding: '12px',
-                        border: '1px solid rgba(255, 255, 255, 0.05)',
+                        background: '#0d1117',
+                        borderRadius: '6px',
+                        padding: '10px 12px',
+                        border: '1px solid #212836',
                       }}
                     >
-                      <div style={{ fontSize: '11px', color: '#94a3b8' }}>TOTAL DISTANCE</div>
-                      <div style={{ fontSize: '20px', fontWeight: 800, color: '#ffffff', marginTop: '2px' }}>
+                      <div style={{ fontSize: '10.5px', fontFamily: 'ui-monospace, monospace', color: '#8b949e' }}>
+                        TOTAL DISTANCE
+                      </div>
+                      <div style={{ fontSize: '18px', fontWeight: 700, fontFamily: 'ui-monospace, monospace', color: '#f0f6fc', marginTop: '2px' }}>
                         {tourPlan.totalDistanceMiles.toLocaleString()} mi
                       </div>
-                      <div style={{ fontSize: '11px', color: '#10b981', marginTop: '2px' }}>
-                        Drivable routing
+                      <div style={{ fontSize: '11px', color: '#38bdf8', marginTop: '2px' }}>
+                        Drivable corridor
                       </div>
                     </div>
 
                     <div
                       style={{
-                        background: 'rgba(255, 255, 255, 0.03)',
-                        borderRadius: '10px',
-                        padding: '12px',
-                        border: '1px solid rgba(255, 255, 255, 0.05)',
+                        background: '#0d1117',
+                        borderRadius: '6px',
+                        padding: '10px 12px',
+                        border: '1px solid #212836',
                       }}
                     >
-                      <div style={{ fontSize: '11px', color: '#94a3b8' }}>SHOW / REST DAYS</div>
-                      <div style={{ fontSize: '20px', fontWeight: 800, color: '#ffffff', marginTop: '2px' }}>
+                      <div style={{ fontSize: '10.5px', fontFamily: 'ui-monospace, monospace', color: '#8b949e' }}>
+                        SHOW / REST DAYS
+                      </div>
+                      <div style={{ fontSize: '18px', fontWeight: 700, fontFamily: 'ui-monospace, monospace', color: '#f0f6fc', marginTop: '2px' }}>
                         {tourPlan.totalShows} shows • {tourPlan.totalOffDays} rest
                       </div>
-                      <div style={{ fontSize: '11px', color: '#f59e0b', marginTop: '2px' }}>
+                      <div style={{ fontSize: '11px', color: '#fbbf24', marginTop: '2px' }}>
                         Burnout protected
                       </div>
                     </div>
 
                     <div
                       style={{
-                        background: 'rgba(255, 255, 255, 0.03)',
-                        borderRadius: '10px',
-                        padding: '12px',
-                        border: '1px solid rgba(255, 255, 255, 0.05)',
+                        background: '#0d1117',
+                        borderRadius: '6px',
+                        padding: '10px 12px',
+                        border: '1px solid #212836',
                         gridColumn: 'span 2',
                       }}
                     >
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <div>
-                          <div style={{ fontSize: '11px', color: '#94a3b8' }}>
-                            AVERAGE CULTURAL INDEX (QLOO TASTE GRAPH)
-                          </div>
-                          <div style={{ fontSize: '20px', fontWeight: 800, color: '#c4b5fd', marginTop: '2px' }}>
-                            {tourPlan.culturalIndexAvg}x national baseline
-                          </div>
-                        </div>
-                        <Flame size={28} color="#8b5cf6" />
+                      <div style={{ fontSize: '10.5px', fontFamily: 'ui-monospace, monospace', color: '#8b949e' }}>
+                        AVERAGE CULTURAL AFFINITY (QLOO TASTE GRAPH)
+                      </div>
+                      <div style={{ fontSize: '18px', fontWeight: 700, fontFamily: 'ui-monospace, monospace', color: '#34d399', marginTop: '2px' }}>
+                        {tourPlan.culturalIndexAvg}x national baseline
+                      </div>
+                      <div style={{ fontSize: '11px', color: '#8b949e', marginTop: '2px' }}>
+                        Normalized subgenre audience density across booked markets
                       </div>
                     </div>
                   </div>
@@ -185,12 +213,11 @@ export default function Home() {
                     style={{
                       width: '100%',
                       justifyContent: 'center',
-                      fontSize: '13px',
-                      padding: '10px',
-                      borderColor: 'rgba(139, 92, 246, 0.3)',
+                      fontSize: '12.5px',
+                      padding: '8px',
                     }}
                   >
-                    <Terminal size={14} color="#8b5cf6" />
+                    <Terminal size={13} color="#38bdf8" />
                     <span>Inspect Agent Execution Trace ({tourPlan.executionTrace.length} tools)</span>
                   </button>
                 </div>
@@ -198,7 +225,7 @@ export default function Home() {
             </div>
 
             {/* Right Column: Tour Map & Stop Cards */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
               {tourPlan && (
                 <>
                   <TourMap
@@ -214,14 +241,14 @@ export default function Home() {
                         display: 'flex',
                         justifyContent: 'space-between',
                         alignItems: 'center',
-                        marginBottom: '16px',
+                        marginBottom: '12px',
                       }}
                     >
-                      <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#ffffff' }}>
-                        Itinerary &amp; Stop Activations ({tourPlan.stops.length} dates)
+                      <h3 style={{ fontSize: '15px', fontWeight: 600, color: '#f0f6fc', margin: 0 }}>
+                        Itinerary &amp; Venue Routing ({tourPlan.stops.length} dates)
                       </h3>
-                      <span style={{ fontSize: '12px', color: '#94a3b8' }}>
-                        Click stop to focus map
+                      <span style={{ fontSize: '12px', color: '#8b949e' }}>
+                        Click stop to highlight on map
                       </span>
                     </div>
 

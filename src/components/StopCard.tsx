@@ -4,15 +4,10 @@ import React from 'react';
 import { TourStop } from '@/types';
 import {
   MapPin,
-  Calendar,
-  Users,
-  Compass,
   Music,
   ShoppingBag,
   Car,
   Mail,
-  Flame,
-  Coffee,
 } from 'lucide-react';
 
 interface StopCardProps {
@@ -34,38 +29,36 @@ export const StopCard: React.FC<StopCardProps> = ({
         onClick={onSelect}
         id={`stop-card-${stop.stopNumber}`}
         style={{
-          background: isSelected
-            ? 'linear-gradient(135deg, rgba(245, 158, 11, 0.12), rgba(18, 24, 36, 0.95))'
-            : 'rgba(18, 24, 36, 0.6)',
-          border: isSelected
-            ? '1px solid rgba(245, 158, 11, 0.4)'
-            : '1px solid rgba(255, 255, 255, 0.05)',
-          borderRadius: '12px',
-          padding: '16px 20px',
-          marginBottom: '12px',
+          background: isSelected ? '#1c1f26' : '#111620',
+          border: isSelected ? '1px solid #d97706' : '1px solid #212836',
+          borderRadius: '6px',
+          padding: '12px 16px',
+          marginBottom: '10px',
           cursor: 'pointer',
-          transition: 'all 0.2s ease',
         }}
       >
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <span
               style={{
-                background: 'rgba(245, 158, 11, 0.15)',
-                color: '#fcd34d',
-                padding: '3px 8px',
-                borderRadius: '6px',
-                fontSize: '11px',
-                fontWeight: 700,
+                background: 'rgba(217, 119, 6, 0.15)',
+                color: '#fbbf24',
+                padding: '2px 6px',
+                borderRadius: '4px',
+                fontSize: '10.5px',
+                fontFamily: 'ui-monospace, monospace',
+                fontWeight: 600,
               }}
             >
               DAY {stop.stopNumber}
             </span>
-            <span style={{ fontSize: '14px', fontWeight: 600, color: '#f1f5f9' }}>
-              Travel & Rest Day
+            <span style={{ fontSize: '13px', fontWeight: 600, color: '#f0f6fc' }}>
+              Travel &amp; Van Rest Day
             </span>
           </div>
-          <span style={{ fontSize: '12px', color: '#94a3b8' }}>{stop.date} ({stop.dayOfWeek})</span>
+          <span style={{ fontSize: '12px', color: '#8b949e', fontFamily: 'ui-monospace, monospace' }}>
+            {stop.date} ({stop.dayOfWeek})
+          </span>
         </div>
 
         <div
@@ -73,17 +66,19 @@ export const StopCard: React.FC<StopCardProps> = ({
             display: 'flex',
             alignItems: 'center',
             gap: '12px',
-            marginTop: '8px',
-            fontSize: '13px',
-            color: '#cbd5e1',
+            marginTop: '6px',
+            fontSize: '12px',
+            color: '#8b949e',
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <Car size={14} color="#f59e0b" />
-            <span>{stop.driveDistanceMiles} miles transit ({stop.driveHours} hrs driving)</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+            <Car size={13} color="#d97706" />
+            <span style={{ fontFamily: 'ui-monospace, monospace' }}>
+              {stop.driveDistanceMiles} mi transit (~{stop.driveHours}h drive)
+            </span>
           </div>
-          <span style={{ color: '#475569' }}>•</span>
-          <span style={{ color: '#94a3b8' }}>{stop.notes || 'Recovery & van maintenance'}</span>
+          <span style={{ color: '#30363d' }}>•</span>
+          <span>{stop.notes || 'Mandatory rest cadence (burnout prevention)'}</span>
         </div>
       </div>
     );
@@ -98,20 +93,13 @@ export const StopCard: React.FC<StopCardProps> = ({
       onClick={onSelect}
       id={`stop-card-${stop.stopNumber}`}
       style={{
-        background: isSelected
-          ? 'linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(18, 24, 36, 0.98))'
-          : 'rgba(18, 24, 36, 0.75)',
-        border: isSelected
-          ? '1px solid rgba(139, 92, 246, 0.5)'
-          : '1px solid rgba(255, 255, 255, 0.07)',
-        borderRadius: '14px',
-        padding: '20px',
-        marginBottom: '16px',
+        background: isSelected ? '#161d2b' : '#111620',
+        border: isSelected ? '1px solid #38bdf8' : '1px solid #212836',
+        borderRadius: '6px',
+        padding: '16px 18px',
+        marginBottom: '12px',
         cursor: 'pointer',
-        boxShadow: isSelected
-          ? '0 6px 24px rgba(139, 92, 246, 0.15)'
-          : '0 4px 12px rgba(0, 0, 0, 0.3)',
-        transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
+        boxShadow: isSelected ? '0 2px 8px rgba(0, 0, 0, 0.4)' : 'none',
       }}
     >
       {/* Header Row */}
@@ -120,28 +108,30 @@ export const StopCard: React.FC<StopCardProps> = ({
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'flex-start',
-          marginBottom: '12px',
+          marginBottom: '10px',
         }}
       >
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
             <span
               style={{
-                background: '#8b5cf6',
-                color: '#ffffff',
-                padding: '2px 8px',
-                borderRadius: '6px',
-                fontSize: '11px',
-                fontWeight: 700,
+                background: '#1f2937',
+                color: '#38bdf8',
+                border: '1px solid #374151',
+                padding: '2px 6px',
+                borderRadius: '4px',
+                fontSize: '10.5px',
+                fontFamily: 'ui-monospace, monospace',
+                fontWeight: 600,
               }}
             >
-              STOP #{stop.stopNumber}
+              STOP {stop.stopNumber}
             </span>
-            <span style={{ fontSize: '13px', color: '#94a3b8', display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <Calendar size={13} /> {stop.date} ({stop.dayOfWeek})
+            <span style={{ fontSize: '12px', color: '#8b949e', fontFamily: 'ui-monospace, monospace' }}>
+              {stop.date} ({stop.dayOfWeek})
             </span>
           </div>
-          <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#ffffff' }}>
+          <h3 style={{ fontSize: '16px', fontWeight: 700, color: '#f0f6fc', margin: 0 }}>
             {stop.city}, {stop.state}
           </h3>
         </div>
@@ -151,21 +141,18 @@ export const StopCard: React.FC<StopCardProps> = ({
           <div
             style={{
               textAlign: 'right',
-              background: 'rgba(16, 185, 129, 0.12)',
-              border: '1px solid rgba(16, 185, 129, 0.3)',
-              borderRadius: '8px',
-              padding: '6px 12px',
+              background: '#0d1117',
+              border: '1px solid #212836',
+              borderRadius: '6px',
+              padding: '4px 10px',
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '5px', justifyContent: 'flex-end' }}>
-              <Flame size={14} color="#10b981" />
-              <span style={{ fontSize: '14px', fontWeight: 700, color: '#34d399' }}>
-                {market.affinityScore}/100
-              </span>
+            <div style={{ fontSize: '13px', fontWeight: 700, color: '#34d399', fontFamily: 'ui-monospace, monospace' }}>
+              {market.affinityScore}/100
             </div>
-            <span style={{ fontSize: '11px', color: '#a7f3d0' }}>
-              {Math.round((market.indexRatio - 1) * 100)}% above avg index
-            </span>
+            <div style={{ fontSize: '10.5px', color: '#8b949e' }}>
+              +{Math.round((market.indexRatio - 1) * 100)}% Qloo Index
+            </div>
           </div>
         )}
       </div>
@@ -174,34 +161,36 @@ export const StopCard: React.FC<StopCardProps> = ({
       {venue && (
         <div
           style={{
-            background: 'rgba(255, 255, 255, 0.03)',
-            borderRadius: '10px',
-            padding: '12px 14px',
-            marginBottom: '14px',
-            border: '1px solid rgba(255, 255, 255, 0.05)',
+            background: '#0d1117',
+            borderRadius: '6px',
+            padding: '10px 12px',
+            marginBottom: '12px',
+            border: '1px solid #212836',
           }}
         >
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <MapPin size={15} color="#8b5cf6" />
-              <span style={{ fontWeight: 600, color: '#f1f5f9', fontSize: '14px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <MapPin size={14} color="#38bdf8" />
+              <span style={{ fontWeight: 600, color: '#f0f6fc', fontSize: '13.5px' }}>
                 {venue.name}
               </span>
             </div>
             <span
               style={{
-                fontSize: '12px',
+                fontSize: '11px',
+                fontFamily: 'ui-monospace, monospace',
                 fontWeight: 600,
-                color: '#c4b5fd',
-                background: 'rgba(139, 92, 246, 0.15)',
-                padding: '2px 8px',
-                borderRadius: '6px',
+                color: '#cbd5e1',
+                background: '#161b22',
+                padding: '2px 6px',
+                borderRadius: '4px',
+                border: '1px solid #30363d',
               }}
             >
               {venue.capacity} cap
             </span>
           </div>
-          <p style={{ fontSize: '12px', color: '#94a3b8', marginTop: '6px', lineHeight: 1.4 }}>
+          <p style={{ fontSize: '12px', color: '#8b949e', marginTop: '4px', margin: 0, lineHeight: 1.4 }}>
             {venue.vibe}
           </p>
         </div>
@@ -212,30 +201,30 @@ export const StopCard: React.FC<StopCardProps> = ({
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
-            gap: '12px',
-            marginBottom: '14px',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+            gap: '10px',
+            marginBottom: '12px',
           }}
         >
           {/* Opener recommendation */}
           <div
             style={{
-              background: 'rgba(6, 182, 212, 0.06)',
-              border: '1px solid rgba(6, 182, 212, 0.2)',
-              borderRadius: '8px',
-              padding: '10px 12px',
+              background: '#0d1117',
+              border: '1px solid #212836',
+              borderRadius: '6px',
+              padding: '10px',
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
-              <Music size={13} color="#06b6d4" />
-              <span style={{ fontSize: '11px', fontWeight: 700, color: '#67e8f9', textTransform: 'uppercase' }}>
-                Local Opener Match ({taste.opener.affinityMatch}% overlap)
+            <div style={{ display: 'flex', alignItems: 'center', gap: '5px', marginBottom: '4px' }}>
+              <Music size={12} color="#38bdf8" />
+              <span style={{ fontSize: '10.5px', fontWeight: 600, color: '#7dd3fc', textTransform: 'uppercase', fontFamily: 'ui-monospace, monospace' }}>
+                Matched Opener ({taste.opener.affinityMatch}% fit)
               </span>
             </div>
-            <div style={{ fontWeight: 600, fontSize: '13px', color: '#f1f5f9' }}>
-              {taste.opener.name} <span style={{ color: '#94a3b8', fontWeight: 400 }}>({taste.opener.genre})</span>
+            <div style={{ fontWeight: 600, fontSize: '12.5px', color: '#f0f6fc' }}>
+              {taste.opener.name} <span style={{ color: '#8b949e', fontWeight: 400 }}>({taste.opener.genre})</span>
             </div>
-            <div style={{ fontSize: '11px', color: '#94a3b8', marginTop: '2px' }}>
+            <div style={{ fontSize: '11px', color: '#8b949e', marginTop: '2px' }}>
               {taste.opener.rationale}
             </div>
           </div>
@@ -243,22 +232,22 @@ export const StopCard: React.FC<StopCardProps> = ({
           {/* Taste-matched Pop-up Spot */}
           <div
             style={{
-              background: 'rgba(245, 158, 11, 0.06)',
-              border: '1px solid rgba(245, 158, 11, 0.2)',
-              borderRadius: '8px',
-              padding: '10px 12px',
+              background: '#0d1117',
+              border: '1px solid #212836',
+              borderRadius: '6px',
+              padding: '10px',
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
-              <ShoppingBag size={13} color="#f59e0b" />
-              <span style={{ fontSize: '11px', fontWeight: 700, color: '#fcd34d', textTransform: 'uppercase' }}>
-                Culture Pop-Up Partner
+            <div style={{ display: 'flex', alignItems: 'center', gap: '5px', marginBottom: '4px' }}>
+              <ShoppingBag size={12} color="#fbbf24" />
+              <span style={{ fontSize: '10.5px', fontWeight: 600, color: '#fde68a', textTransform: 'uppercase', fontFamily: 'ui-monospace, monospace' }}>
+                Culture Anchor
               </span>
             </div>
-            <div style={{ fontWeight: 600, fontSize: '13px', color: '#f1f5f9' }}>
+            <div style={{ fontWeight: 600, fontSize: '12.5px', color: '#f0f6fc' }}>
               {taste.popUpSpot.name}
             </div>
-            <div style={{ fontSize: '11px', color: '#94a3b8', marginTop: '2px' }}>
+            <div style={{ fontSize: '11px', color: '#8b949e', marginTop: '2px' }}>
               {taste.popUpSpot.culturalMatch}
             </div>
           </div>
@@ -271,15 +260,15 @@ export const StopCard: React.FC<StopCardProps> = ({
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          borderTop: '1px solid rgba(255, 255, 255, 0.06)',
-          paddingTop: '12px',
+          borderTop: '1px solid #212836',
+          paddingTop: '10px',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: '#94a3b8' }}>
-          <Car size={14} color="#64748b" />
-          <span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11.5px', color: '#8b949e' }}>
+          <Car size={13} color="#64748b" />
+          <span style={{ fontFamily: 'ui-monospace, monospace' }}>
             {stop.driveDistanceMiles === 0
-              ? 'Tour Launch Point'
+              ? 'Tour Origin'
               : `${stop.driveDistanceMiles} mi • ~${stop.driveHours}h drive`}
           </span>
         </div>
@@ -293,13 +282,10 @@ export const StopCard: React.FC<StopCardProps> = ({
           id={`btn-open-pitch-${stop.stopNumber}`}
           style={{
             fontSize: '12px',
-            padding: '6px 14px',
-            background: 'rgba(139, 92, 246, 0.15)',
-            border: '1px solid rgba(139, 92, 246, 0.3)',
-            color: '#c4b5fd',
+            padding: '4px 10px',
           }}
         >
-          <Mail size={13} />
+          <Mail size={12} />
           <span>Promoter Pitch</span>
         </button>
       </div>

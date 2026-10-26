@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Compass, Sparkles, ShieldCheck, Cpu, Radio } from 'lucide-react';
+import { Compass, ShieldCheck, Cpu } from 'lucide-react';
 
 export type ActiveTab = 'planner' | 'receipts' | 'architecture';
 
@@ -18,7 +18,7 @@ export const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab }) => {
   }>({
     connected: true,
     configured: false,
-    message: 'Taste Graph Ready',
+    message: 'Taste Graph Grounded',
   });
 
   useEffect(() => {
@@ -30,26 +30,25 @@ export const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab }) => {
             connected: data.connected,
             configured: data.configured,
             message: data.configured
-              ? 'Qloo Live API Connected'
-              : 'Qloo Taste Graph Grounded (Active)',
+              ? 'Qloo Live API'
+              : 'Qloo Taste Graph (Grounded)',
           });
         }
       })
       .catch(() => {
-        // Safe default
+        // Fallback gracefully
       });
   }, []);
 
   return (
     <header
       style={{
-        borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
-        backgroundColor: 'rgba(11, 15, 23, 0.85)',
-        backdropFilter: 'blur(16px)',
+        borderBottom: '1px solid #212836',
+        backgroundColor: '#0d1117',
         position: 'sticky',
         top: 0,
         zIndex: 100,
-        padding: '16px 28px',
+        padding: '12px 24px',
       }}
     >
       <div
@@ -64,55 +63,67 @@ export const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab }) => {
         }}
       >
         {/* Brand identity */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <div
             style={{
-              width: '42px',
-              height: '42px',
-              borderRadius: '12px',
-              background: 'linear-gradient(135deg, #8b5cf6, #06b6d4)',
+              width: '32px',
+              height: '32px',
+              borderRadius: '6px',
+              background: '#1f2937',
+              border: '1px solid #374151',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              boxShadow: '0 4px 20px rgba(139, 92, 246, 0.4)',
+              color: '#38bdf8',
             }}
           >
-            <Compass size={24} color="#ffffff" />
+            <Compass size={18} />
           </div>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <h1 style={{ fontSize: '20px', fontWeight: 800, letterSpacing: '-0.02em', color: '#ffffff' }}>
+              <span style={{ fontSize: '16px', fontWeight: 700, letterSpacing: '-0.02em', color: '#f8fafc' }}>
                 ROADIE
-              </h1>
-              <span className="badge badge-purple" style={{ fontSize: '10.5px' }}>
-                TOUR AGENT
+              </span>
+              <span
+                style={{
+                  fontFamily: 'ui-monospace, monospace',
+                  fontSize: '10px',
+                  fontWeight: 600,
+                  padding: '1px 6px',
+                  borderRadius: '3px',
+                  backgroundColor: '#1e293b',
+                  color: '#94a3b8',
+                  border: '1px solid #334155',
+                }}
+              >
+                TOUR ROUTING AGENT
               </span>
             </div>
-            <p style={{ fontSize: '12px', color: '#94a3b8' }}>
-              Cultural Intelligence &amp; Deterministic Tour Routing for Indie Musicians
+            <p style={{ fontSize: '12px', color: '#64748b', margin: 0 }}>
+              Grounded in Qloo cultural affinity &amp; deterministic mileage constraints
             </p>
           </div>
         </div>
 
         {/* Navigation Tabs */}
-        <nav style={{ display: 'flex', gap: '6px' }}>
+        <nav style={{ display: 'flex', gap: '4px' }}>
           <button
             onClick={() => setActiveTab('planner')}
             id="tab-nav-planner"
             style={{
-              padding: '8px 16px',
-              borderRadius: '8px',
+              padding: '6px 14px',
+              borderRadius: '6px',
               fontSize: '13px',
-              fontWeight: activeTab === 'planner' ? 700 : 500,
-              background: activeTab === 'planner' ? 'rgba(139, 92, 246, 0.15)' : 'transparent',
-              border: activeTab === 'planner' ? '1px solid rgba(139, 92, 246, 0.4)' : '1px solid transparent',
-              color: activeTab === 'planner' ? '#c4b5fd' : '#94a3b8',
+              fontWeight: activeTab === 'planner' ? 600 : 400,
+              background: activeTab === 'planner' ? '#161d2b' : 'transparent',
+              border: activeTab === 'planner' ? '1px solid #2d3748' : '1px solid transparent',
+              color: activeTab === 'planner' ? '#f1f5f9' : '#8b949e',
               display: 'flex',
               alignItems: 'center',
               gap: '6px',
             }}
           >
-            <Compass size={15} />
+            <Compass size={14} />
             <span>Tour Planner</span>
           </button>
 
@@ -120,19 +131,19 @@ export const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab }) => {
             onClick={() => setActiveTab('receipts')}
             id="tab-nav-receipts"
             style={{
-              padding: '8px 16px',
-              borderRadius: '8px',
+              padding: '6px 14px',
+              borderRadius: '6px',
               fontSize: '13px',
-              fontWeight: activeTab === 'receipts' ? 700 : 500,
-              background: activeTab === 'receipts' ? 'rgba(16, 185, 129, 0.15)' : 'transparent',
-              border: activeTab === 'receipts' ? '1px solid rgba(16, 185, 129, 0.4)' : '1px solid transparent',
-              color: activeTab === 'receipts' ? '#6ee7b7' : '#94a3b8',
+              fontWeight: activeTab === 'receipts' ? 600 : 400,
+              background: activeTab === 'receipts' ? '#161d2b' : 'transparent',
+              border: activeTab === 'receipts' ? '1px solid #2d3748' : '1px solid transparent',
+              color: activeTab === 'receipts' ? '#f1f5f9' : '#8b949e',
               display: 'flex',
               alignItems: 'center',
               gap: '6px',
             }}
           >
-            <ShieldCheck size={15} />
+            <ShieldCheck size={14} />
             <span>The Receipts (Backtest)</span>
           </button>
 
@@ -140,47 +151,47 @@ export const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab }) => {
             onClick={() => setActiveTab('architecture')}
             id="tab-nav-architecture"
             style={{
-              padding: '8px 16px',
-              borderRadius: '8px',
+              padding: '6px 14px',
+              borderRadius: '6px',
               fontSize: '13px',
-              fontWeight: activeTab === 'architecture' ? 700 : 500,
-              background: activeTab === 'architecture' ? 'rgba(6, 182, 212, 0.15)' : 'transparent',
-              border: activeTab === 'architecture' ? '1px solid rgba(6, 182, 212, 0.4)' : '1px solid transparent',
-              color: activeTab === 'architecture' ? '#67e8f9' : '#94a3b8',
+              fontWeight: activeTab === 'architecture' ? 600 : 400,
+              background: activeTab === 'architecture' ? '#161d2b' : 'transparent',
+              border: activeTab === 'architecture' ? '1px solid #2d3748' : '1px solid transparent',
+              color: activeTab === 'architecture' ? '#f1f5f9' : '#8b949e',
               display: 'flex',
               alignItems: 'center',
               gap: '6px',
             }}
           >
-            <Cpu size={15} />
+            <Cpu size={14} />
             <span>Agent Architecture</span>
           </button>
         </nav>
 
         {/* Live Qloo Status Pill */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
           <div
             style={{
               display: 'flex',
               alignItems: 'center',
               gap: '6px',
-              background: 'rgba(255, 255, 255, 0.04)',
-              border: '1px solid rgba(255, 255, 255, 0.08)',
-              padding: '5px 12px',
-              borderRadius: '20px',
+              background: '#161b22',
+              border: '1px solid #30363d',
+              padding: '4px 10px',
+              borderRadius: '4px',
               fontSize: '11.5px',
+              fontFamily: 'ui-monospace, monospace',
             }}
           >
             <span
               style={{
-                width: '7px',
-                height: '7px',
+                width: '6px',
+                height: '6px',
                 borderRadius: '50%',
-                backgroundColor: qlooStatus.configured ? '#10b981' : '#a855f7',
-                boxShadow: `0 0 8px ${qlooStatus.configured ? '#10b981' : '#a855f7'}`,
+                backgroundColor: qlooStatus.configured ? '#3fb950' : '#a371f7',
               }}
             />
-            <span style={{ color: '#cbd5e1' }}>{qlooStatus.message}</span>
+            <span style={{ color: '#c9d1d9' }}>{qlooStatus.message}</span>
           </div>
 
           <a
@@ -191,13 +202,14 @@ export const Header: React.FC<HeaderProps> = ({ activeTab, setActiveTab }) => {
               display: 'flex',
               alignItems: 'center',
               gap: '6px',
-              color: '#94a3b8',
-              fontSize: '12px',
+              color: '#8b949e',
+              fontSize: '12.5px',
+              textDecoration: 'none',
             }}
           >
             <svg
-              width="16"
-              height="16"
+              width="15"
+              height="15"
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"

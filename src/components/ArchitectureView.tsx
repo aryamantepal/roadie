@@ -1,205 +1,333 @@
 'use client';
 
 import React from 'react';
-import { Cpu, Layers, GitBranch, Zap, ShieldCheck, CheckCircle2, ArrowRight } from 'lucide-react';
+import { MermaidDiagram } from './MermaidDiagram';
+import { Shield, CheckCircle2 } from 'lucide-react';
+
+const AGENT_MERMAID_CHART = `flowchart TD
+    subgraph Inputs["1. Tour Request & Bounds"]
+        In1["Artist & Genre Profile"]
+        In2["Date Window & Target Corridor"]
+        In3["Capacity Tier (e.g. 250-cap club)"]
+    end
+
+    subgraph Core["2. ReAct Agent Loop"]
+        Orch["Agent Orchestrator (Typed State Machine)"]
+    end
+
+    subgraph Tools["3. Deterministic Tools (Preconditions In-Tool)"]
+        T1["audience_affinity<br/><b>Qloo API:</b> 250M+ Entity Taste Graph<br/><i>Ranks markets by affinity ratio</i>"]
+        T2["find_venues<br/><b>Ticketmaster & Curated Indie Venues:</b><br/><i>Filters verified room sizes</i>"]
+        T3["local_taste<br/><b>Qloo Cross-Domain Affinities:</b><br/><i>Pairs local openers & cultural spots</i>"]
+        T4["build_route<br/><b>Deterministic TSP (2-Opt Algorithm):</b><br/><i>Calculates drivable mileage & rest days</i>"]
+        T5["draft_pitch<br/><b>Promoter Pitch Engine:</b><br/><i>Cites local Qloo metrics & synergies</i>"]
+    end
+
+    subgraph Validation["4. Touring Circuit Breakers"]
+        V1["Max Daily Drive: 320 miles"]
+        V2["Rest Cadence: Max 3 consecutive shows"]
+        V3["Market Radius: Min 45 mi between stops"]
+    end
+
+    subgraph Artifacts["5. Tour Execution Artifacts"]
+        Out1["Day-by-Day Route Itinerary"]
+        Out2["Geographic Drive-Time Map"]
+        Out3["Promoter Pitch Packets with Qloo Data"]
+    end
+
+    Inputs --> Orch
+    Orch -->|Step 1: Rank Markets| T1
+    T1 -.->|Affinity Scores| Orch
+    Orch -->|Step 2: Match Venues| T2
+    T2 -.->|Verified Rooms| Orch
+    Orch -->|Step 3: Cultural Context| T3
+    T3 -.->|Openers & Pop-ups| Orch
+    Orch -->|Step 4: Optimize Sequence| T4
+    T4 --> Validation
+    Validation -->|Verified Routing| Orch
+    Orch -->|Step 5: Generate Pitches| T5
+    T5 -.->|Pitch Emails| Out3
+    Orch --> Out1
+    Orch --> Out2
+`;
 
 export const ArchitectureView: React.FC = () => {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-      {/* Intro */}
+      {/* Intro Header */}
       <div
-        className="glass-panel"
         style={{
-          padding: '24px',
-          borderLeft: '4px solid #06b6d4',
-          backgroundColor: '#0c131d',
+          padding: '20px 24px',
+          borderRadius: '8px',
+          border: '1px solid #30363d',
+          backgroundColor: '#161b22',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
-          <Cpu size={22} color="#06b6d4" />
-          <h2 style={{ fontSize: '20px', fontWeight: 700, color: '#ffffff' }}>
-            Roadie Agent Architecture &amp; System Design
-          </h2>
-        </div>
-        <p style={{ color: '#cbd5e1', fontSize: '14px', lineHeight: '1.6', maxWidth: '860px' }}>
-          Roadie rejects fragile multi-step LLM hallucination chains. Instead, it pairs an autonomous
-          agent loop with <strong>5 thin, deterministic tools</strong> where preconditions are
-          strictly enforced inside the tools themselves.
+        <h2 style={{ fontSize: '18px', fontWeight: 700, color: '#f0f6fc', marginBottom: '8px' }}>
+          Agent Architecture: Deterministic Tooling with Cultural Grounding
+        </h2>
+        <p style={{ color: '#8b949e', fontSize: '13.5px', lineHeight: 1.6, maxWidth: '840px', margin: 0 }}>
+          Independent tour routing cannot rely on ungrounded LLMs. When prompted to route a tour, language
+          models suffer from two fatal failure modes: <strong>population bias</strong> (routing indie bands to
+          the 10 largest metros regardless of subcultural scene) and <strong>routing hallucination</strong> (generating
+          exhausting 14-hour overnight zigzag drives).
+        </p>
+        <p style={{ color: '#8b949e', fontSize: '13.5px', lineHeight: 1.6, maxWidth: '840px', marginTop: '8px', marginBottom: 0 }}>
+          Roadie implements an autonomous agent loop that strictly delegates to <strong>5 thin, deterministic tools</strong>.
+          Every tool enforces its own preconditions before execution, ensuring the agent operates within the physical
+          realities of van touring.
         </p>
       </div>
 
-      {/* The 5 Thin Tools Breakdown */}
+      {/* Interactive Mermaid Diagram */}
+      <div>
+        <div style={{ marginBottom: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <h3 style={{ fontSize: '14px', fontWeight: 600, color: '#f0f6fc', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+            System Architecture Diagram
+          </h3>
+          <span style={{ fontSize: '12px', color: '#8b949e' }}>
+            Interactive Mermaid rendering • Click &apos;Raw Definition&apos; to inspect source
+          </span>
+        </div>
+        <MermaidDiagram chart={AGENT_MERMAID_CHART} />
+      </div>
+
+      {/* The 5 Thin Tools Specification */}
       <div
-        className="glass-panel"
         style={{
           padding: '24px',
+          borderRadius: '8px',
+          border: '1px solid #30363d',
+          backgroundColor: '#161b22',
         }}
       >
-        <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#ffffff', marginBottom: '16px' }}>
-          The 5 Thin Tools with In-Tool Precondition Enforcement
+        <h3 style={{ fontSize: '16px', fontWeight: 700, color: '#f0f6fc', marginBottom: '16px' }}>
+          The 5 Thin Tools &amp; In-Tool Precondition Enforcement
         </h3>
 
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px' }}>
           {/* Tool 1 */}
           <div
             style={{
-              background: 'rgba(255, 255, 255, 0.02)',
-              border: '1px solid rgba(139, 92, 246, 0.25)',
-              borderRadius: '12px',
+              background: '#0d1117',
+              border: '1px solid #30363d',
+              borderRadius: '6px',
               padding: '16px',
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
-              <span className="badge badge-purple">Tool 1</span>
-              <span style={{ fontWeight: 700, color: '#ffffff', fontSize: '14px' }}>audience_affinity</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+              <span
+                style={{
+                  fontFamily: 'ui-monospace, monospace',
+                  fontSize: '11px',
+                  fontWeight: 700,
+                  color: '#58a6ff',
+                  backgroundColor: 'rgba(56, 139, 253, 0.15)',
+                  padding: '2px 6px',
+                  borderRadius: '4px',
+                }}
+              >
+                01
+              </span>
+              <span style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 600, color: '#f0f6fc', fontSize: '13px' }}>
+                audience_affinity
+              </span>
             </div>
-            <p style={{ fontSize: '12.5px', color: '#94a3b8', lineHeight: 1.5 }}>
-              Queries Qloo’s 250M+ entity taste graph. Ranks geographic markets by over-indexing fan affinity ratios.
+            <p style={{ fontSize: '12.5px', color: '#8b949e', lineHeight: 1.5, margin: 0 }}>
+              Queries Qloo’s 250M+ entity graph. Ranks markets by subgenre affinity ratio rather than raw population.
             </p>
-            <div style={{ marginTop: '10px', fontSize: '11.5px', color: '#10b981', display: 'flex', alignItems: 'center', gap: '5px' }}>
+            <div style={{ marginTop: '12px', fontSize: '11px', color: '#3fb950', display: 'flex', alignItems: 'center', gap: '6px' }}>
               <CheckCircle2 size={13} />
-              <span>Precondition: Non-empty artist query; validates taste cluster</span>
+              <span>Precondition: Artist resolved in Qloo entity index</span>
             </div>
           </div>
 
           {/* Tool 2 */}
           <div
             style={{
-              background: 'rgba(255, 255, 255, 0.02)',
-              border: '1px solid rgba(6, 182, 212, 0.25)',
-              borderRadius: '12px',
+              background: '#0d1117',
+              border: '1px solid #30363d',
+              borderRadius: '6px',
               padding: '16px',
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
-              <span className="badge badge-cyan">Tool 2</span>
-              <span style={{ fontWeight: 700, color: '#ffffff', fontSize: '14px' }}>find_venues</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+              <span
+                style={{
+                  fontFamily: 'ui-monospace, monospace',
+                  fontSize: '11px',
+                  fontWeight: 700,
+                  color: '#58a6ff',
+                  backgroundColor: 'rgba(56, 139, 253, 0.15)',
+                  padding: '2px 6px',
+                  borderRadius: '4px',
+                }}
+              >
+                02
+              </span>
+              <span style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 600, color: '#f0f6fc', fontSize: '13px' }}>
+                find_venues
+              </span>
             </div>
-            <p style={{ fontSize: '12.5px', color: '#94a3b8', lineHeight: 1.5 }}>
-              Ticketmaster Discovery API &amp; curated indie network matching right-sized rooms (e.g. 250-cap club vs 850-cap ballroom).
+            <p style={{ fontSize: '12.5px', color: '#8b949e', lineHeight: 1.5, margin: 0 }}>
+              Filters Ticketmaster Discovery &amp; verified indie database for realistic room sizes (e.g. 200–450 cap clubs).
             </p>
-            <div style={{ marginTop: '10px', fontSize: '11.5px', color: '#10b981', display: 'flex', alignItems: 'center', gap: '5px' }}>
+            <div style={{ marginTop: '12px', fontSize: '11px', color: '#3fb950', display: 'flex', alignItems: 'center', gap: '6px' }}>
               <CheckCircle2 size={13} />
-              <span>Precondition: Valid city/state &amp; supported capacity tier</span>
+              <span>Precondition: Capacity bracket matches band tier</span>
             </div>
           </div>
 
           {/* Tool 3 */}
           <div
             style={{
-              background: 'rgba(255, 255, 255, 0.02)',
-              border: '1px solid rgba(245, 158, 11, 0.25)',
-              borderRadius: '12px',
+              background: '#0d1117',
+              border: '1px solid #30363d',
+              borderRadius: '6px',
               padding: '16px',
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
-              <span className="badge badge-amber">Tool 3</span>
-              <span style={{ fontWeight: 700, color: '#ffffff', fontSize: '14px' }}>local_taste</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+              <span
+                style={{
+                  fontFamily: 'ui-monospace, monospace',
+                  fontSize: '11px',
+                  fontWeight: 700,
+                  color: '#58a6ff',
+                  backgroundColor: 'rgba(56, 139, 253, 0.15)',
+                  padding: '2px 6px',
+                  borderRadius: '4px',
+                }}
+              >
+                03
+              </span>
+              <span style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 600, color: '#f0f6fc', fontSize: '13px' }}>
+                local_taste
+              </span>
             </div>
-            <p style={{ fontSize: '12.5px', color: '#94a3b8', lineHeight: 1.5 }}>
-              Leverages Qloo cross-domain affinities (dining, retail) to discover high-affinity local openers and taste-matched pop-up spots.
+            <p style={{ fontSize: '12.5px', color: '#8b949e', lineHeight: 1.5, margin: 0 }}>
+              Discovers compatible local openers and taste-matched cultural anchors (record stores, coffee shops).
             </p>
-            <div style={{ marginTop: '10px', fontSize: '11.5px', color: '#10b981', display: 'flex', alignItems: 'center', gap: '5px' }}>
+            <div style={{ marginTop: '12px', fontSize: '11px', color: '#3fb950', display: 'flex', alignItems: 'center', gap: '6px' }}>
               <CheckCircle2 size={13} />
-              <span>Precondition: Artist &amp; city confirmed with local entities</span>
+              <span>Precondition: Cross-domain affinity overlap &gt; 65%</span>
             </div>
           </div>
 
           {/* Tool 4 */}
           <div
             style={{
-              background: 'rgba(255, 255, 255, 0.02)',
-              border: '1px solid rgba(16, 185, 129, 0.25)',
-              borderRadius: '12px',
+              background: '#0d1117',
+              border: '1px solid #30363d',
+              borderRadius: '6px',
               padding: '16px',
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
-              <span className="badge badge-emerald">Tool 4</span>
-              <span style={{ fontWeight: 700, color: '#ffffff', fontSize: '14px' }}>build_route</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+              <span
+                style={{
+                  fontFamily: 'ui-monospace, monospace',
+                  fontSize: '11px',
+                  fontWeight: 700,
+                  color: '#58a6ff',
+                  backgroundColor: 'rgba(56, 139, 253, 0.15)',
+                  padding: '2px 6px',
+                  borderRadius: '4px',
+                }}
+              >
+                04
+              </span>
+              <span style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 600, color: '#f0f6fc', fontSize: '13px' }}>
+                build_route
+              </span>
             </div>
-            <p style={{ fontSize: '12.5px', color: '#94a3b8', lineHeight: 1.5 }}>
-              Deterministic TSP / 2-Opt route optimizer. Enforces realistic indie band constraints: max 320 miles/day, off-days every 3 shows.
+            <p style={{ fontSize: '12.5px', color: '#8b949e', lineHeight: 1.5, margin: 0 }}>
+              Deterministic 2-Opt Traveling Salesperson optimizer. Injects mandatory rest days every 3 shows.
             </p>
-            <div style={{ marginTop: '10px', fontSize: '11.5px', color: '#10b981', display: 'flex', alignItems: 'center', gap: '5px' }}>
+            <div style={{ marginTop: '12px', fontSize: '11px', color: '#3fb950', display: 'flex', alignItems: 'center', gap: '6px' }}>
               <CheckCircle2 size={13} />
-              <span>Precondition: ≥2 stops, valid chronological date window</span>
+              <span>Precondition: Leg distance ≤ 320 miles; date monotonicity</span>
             </div>
           </div>
 
           {/* Tool 5 */}
           <div
             style={{
-              background: 'rgba(255, 255, 255, 0.02)',
-              border: '1px solid rgba(244, 63, 94, 0.25)',
-              borderRadius: '12px',
+              background: '#0d1117',
+              border: '1px solid #30363d',
+              borderRadius: '6px',
               padding: '16px',
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
-              <span className="badge badge-rose">Tool 5</span>
-              <span style={{ fontWeight: 700, color: '#ffffff', fontSize: '14px' }}>draft_pitch</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+              <span
+                style={{
+                  fontFamily: 'ui-monospace, monospace',
+                  fontSize: '11px',
+                  fontWeight: 700,
+                  color: '#58a6ff',
+                  backgroundColor: 'rgba(56, 139, 253, 0.15)',
+                  padding: '2px 6px',
+                  borderRadius: '4px',
+                }}
+              >
+                05
+              </span>
+              <span style={{ fontFamily: 'ui-monospace, monospace', fontWeight: 600, color: '#f0f6fc', fontSize: '13px' }}>
+                draft_pitch
+              </span>
             </div>
-            <p style={{ fontSize: '12.5px', color: '#94a3b8', lineHeight: 1.5 }}>
-              Generates promoter-ready emails citing specific local Qloo affinity metrics, opener synergies, and ticket advance forecasts.
+            <p style={{ fontSize: '12.5px', color: '#8b949e', lineHeight: 1.5, margin: 0 }}>
+              Formats booking inquiry email tailored to venue promoter, citing local market index and opener synergies.
             </p>
-            <div style={{ marginTop: '10px', fontSize: '11.5px', color: '#10b981', display: 'flex', alignItems: 'center', gap: '5px' }}>
+            <div style={{ marginTop: '12px', fontSize: '11px', color: '#3fb950', display: 'flex', alignItems: 'center', gap: '6px' }}>
               <CheckCircle2 size={13} />
-              <span>Precondition: Venue capacity &gt; 0 and verified market index</span>
+              <span>Precondition: Verified venue contact &amp; market index</span>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Why Qloo Is Essential vs Generic LLM */}
+      {/* Touring Circuit Breakers & Pragmatic Constraints */}
       <div
-        className="glass-panel"
         style={{
           padding: '24px',
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-          gap: '20px',
+          borderRadius: '8px',
+          border: '1px solid #30363d',
+          backgroundColor: '#161b22',
         }}
       >
-        <div>
-          <h3 style={{ fontSize: '16px', fontWeight: 700, color: '#fca5a5', marginBottom: '8px' }}>
-            Why Generic LLMs Fail at Tour Routing
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+          <Shield size={18} color="#58a6ff" />
+          <h3 style={{ fontSize: '16px', fontWeight: 700, color: '#f0f6fc', margin: 0 }}>
+            Physical Constraints &amp; Circuit Breakers
           </h3>
-          <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '13px', color: '#cbd5e1' }}>
-            <li style={{ display: 'flex', gap: '8px' }}>
-              <span style={{ color: '#f43f5e', fontWeight: 700 }}>✗</span>
-              <span><strong>Population Bias:</strong> Defaulting to the 5 biggest metros (LA, NYC, Chicago, Houston, Phoenix) regardless of subgenre.</span>
-            </li>
-            <li style={{ display: 'flex', gap: '8px' }}>
-              <span style={{ color: '#f43f5e', fontWeight: 700 }}>✗</span>
-              <span><strong>Cultural Blindness:</strong> Cannot distinguish between general population density and actual subcultural enthusiasm.</span>
-            </li>
-            <li style={{ display: 'flex', gap: '8px' }}>
-              <span style={{ color: '#f43f5e', fontWeight: 700 }}>✗</span>
-              <span><strong>Routing Hallucinations:</strong> Suggesting impossible 14-hour overnight van drives between unconnected markets.</span>
-            </li>
-          </ul>
         </div>
+        <p style={{ fontSize: '13px', color: '#8b949e', lineHeight: 1.6, marginBottom: '16px' }}>
+          Indie bands tour in vans, not tour buses or flights. The agent loop is hard-coded with non-negotiable physical constraints:
+        </p>
 
-        <div>
-          <h3 style={{ fontSize: '16px', fontWeight: 700, color: '#6ee7b7', marginBottom: '8px' }}>
-            The Qloo Taste Graph Unfair Advantage
-          </h3>
-          <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '13px', color: '#cbd5e1' }}>
-            <li style={{ display: 'flex', gap: '8px' }}>
-              <span style={{ color: '#10b981', fontWeight: 700 }}>✓</span>
-              <span><strong>Affinity Indexing:</strong> Identifies markets that over-index 1.8x–2.3x (like Asheville or East Nashville) even with smaller populations.</span>
-            </li>
-            <li style={{ display: 'flex', gap: '8px' }}>
-              <span style={{ color: '#10b981', fontWeight: 700 }}>✓</span>
-              <span><strong>Cross-Domain Grounding:</strong> Connects musical artist taste to local record stores, craft bars, and compatible local openers.</span>
-            </li>
-            <li style={{ display: 'flex', gap: '8px' }}>
-              <span style={{ color: '#10b981', fontWeight: 700 }}>✓</span>
-              <span><strong>Deterministic Drivability:</strong> Combines cultural heatmaps with exact TSP mileage algorithms for van tour reality.</span>
-            </li>
-          </ul>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '14px' }}>
+          <div style={{ padding: '12px 14px', background: '#0d1117', border: '1px solid #21262d', borderRadius: '6px' }}>
+            <div style={{ fontWeight: 600, color: '#f0f6fc', fontSize: '13px' }}>320-Mile Daily Transit Cap</div>
+            <div style={{ fontSize: '12px', color: '#8b949e', marginTop: '4px' }}>
+              No route leg can exceed 5.5 hours of driving between load-in times.
+            </div>
+          </div>
+
+          <div style={{ padding: '12px 14px', background: '#0d1117', border: '1px solid #21262d', borderRadius: '6px' }}>
+            <div style={{ fontWeight: 600, color: '#f0f6fc', fontSize: '13px' }}>3-Show Rest Day Ratio</div>
+            <div style={{ fontSize: '12px', color: '#8b949e', marginTop: '4px' }}>
+              After 3 consecutive performance nights, an off-day or transit-only day is mandatory.
+            </div>
+          </div>
+
+          <div style={{ padding: '12px 14px', background: '#0d1117', border: '1px solid #21262d', borderRadius: '6px' }}>
+            <div style={{ fontWeight: 600, color: '#f0f6fc', fontSize: '13px' }}>Market Cannibalization Guard</div>
+            <div style={{ fontSize: '12px', color: '#8b949e', marginTop: '4px' }}>
+              Minimum 45-mile separation between consecutive show markets to prevent audience splitting.
+            </div>
+          </div>
         </div>
       </div>
     </div>

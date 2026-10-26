@@ -1,4 +1,5 @@
 import {
+  AffinityMarket,
   AgentTraceStep,
   ArtistInput,
   TourPlan,
@@ -155,9 +156,9 @@ export class RoadieAgent {
   }
 
   private filterMarketsByRegion(
-    markets: any[],
+    markets: AffinityMarket[],
     region: string
-  ): any[] {
+  ): AffinityMarket[] {
     if (region === 'US-National') return markets;
 
     const eastStates = ['NY', 'PA', 'MA', 'DC', 'NC', 'GA', 'QC', 'ON', 'NJ', 'MD', 'VA'];

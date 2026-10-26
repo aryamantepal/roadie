@@ -633,18 +633,18 @@ export class QlooClient {
     };
   }
 
-  private transformQlooLocationResults(results: any[], artistName: string): AffinityMarket[] {
+  private transformQlooLocationResults(results: Record<string, unknown>[], artistName: string): AffinityMarket[] {
     return results.map((item, idx) => ({
-      city: item.city || item.name || 'Unknown',
-      state: item.state || item.region || 'US',
+      city: String(item.city || item.name || 'Unknown'),
+      state: String(item.state || item.region || 'US'),
       lat: Number(item.lat || item.latitude || 40.0),
       lng: Number(item.lng || item.longitude || -74.0),
-      affinityScore: Math.round(item.affinity_score || item.score || 85),
-      indexRatio: Math.round((item.index_ratio || 1.45) * 100) / 100,
+      affinityScore: Math.round(Number(item.affinity_score || item.score || 85)),
+      indexRatio: Math.round((Number(item.index_ratio || 1.45)) * 100) / 100,
       rank: idx + 1,
-      topNeighborhoods: item.neighborhoods || ['Arts District', 'Indie Quarter'],
-      tasteArchetype: item.taste_cluster || `${artistName} Affinity Cluster`,
-      similarArtistsLocally: item.similar_entities || ['Regional Indie Peers'],
+      topNeighborhoods: Array.isArray(item.neighborhoods) ? (item.neighborhoods as string[]) : ['Arts District', 'Indie Quarter'],
+      tasteArchetype: String(item.taste_cluster || `${artistName} Affinity Cluster`),
+      similarArtistsLocally: Array.isArray(item.similar_entities) ? (item.similar_entities as string[]) : ['Regional Indie Peers'],
     }));
   }
 
@@ -660,7 +660,7 @@ export class QlooClient {
         indexRatio: 2.1,
         rank: 1,
         topNeighborhoods: ['Greenpoint', 'Bushwick'],
-        tasteArchetype: 'Indie Vanguard',
+        tasteArchetype: `${artistName} Indie Vanguard`,
         similarArtistsLocally: ['Sub Pop Records Roster', 'Secretly Canadian Acts'],
       },
       {

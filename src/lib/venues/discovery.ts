@@ -358,7 +358,7 @@ export async function findVenuesForMarket(
           };
         }
       }
-    } catch (e) {
+    } catch {
       // Fallback to curated network
     }
   }

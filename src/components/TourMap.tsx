@@ -39,8 +39,6 @@ export const TourMap: React.FC<TourMapProps> = ({
     return { x, y };
   };
 
-  const showStops = stops.filter((s) => !s.isOffDay);
-
   // Generate SVG path for route line
   const routePoints = stops.map((stop) => projectCoords(stop.lat, stop.lng));
   const pathD =

@@ -1,18 +1,12 @@
 'use client';
 
 import React, { useState } from 'react';
-import { BacktestCase } from '@/types';
 import { GROUND_TRUTH_BACKTEST_CASES } from '@/lib/backtest/engine';
 import {
-  Award,
   CheckCircle2,
   XCircle,
-  TrendingUp,
-  AlertTriangle,
-  Compass,
-  Car,
   ShieldCheck,
-  Zap,
+  FileText,
 } from 'lucide-react';
 
 export const ReceiptsView: React.FC = () => {
@@ -29,32 +23,31 @@ export const ReceiptsView: React.FC = () => {
   );
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-      {/* Intro Banner */}
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+      {/* Methodology Banner */}
       <div
-        className="glass-panel"
         style={{
-          padding: '24px',
-          borderLeft: '4px solid #8b5cf6',
-          backgroundColor: '#0f1422',
+          padding: '20px 24px',
+          borderRadius: '8px',
+          border: '1px solid #30363d',
+          backgroundColor: '#161b22',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
-          <ShieldCheck size={22} color="#8b5cf6" />
-          <h2 style={{ fontSize: '20px', fontWeight: 700, color: '#ffffff' }}>
-            The Receipts: Ground-Truth Tour Backtesting
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+          <ShieldCheck size={18} color="#38bdf8" />
+          <h2 style={{ fontSize: '18px', fontWeight: 700, color: '#f0f6fc', margin: 0 }}>
+            Empirical Backtest: Real Setlist.fm Tours vs. LLM Baselines
           </h2>
         </div>
-        <p style={{ color: '#cbd5e1', fontSize: '14px', lineHeight: '1.6', maxWidth: '880px' }}>
-          We hide actual verified past tours from <strong>Setlist.fm</strong> and run two parallel
-          subagents: a generic <strong>LLM-only agent</strong> vs. our <strong>Qloo-grounded Roadie agent</strong>.
-          To ensure strict evaluation integrity, we test <strong>emerging post-cutoff artists</strong> so
-          the LLM cannot cheat using memorized training-data tour schedules.
+        <p style={{ color: '#8b949e', fontSize: '13.5px', lineHeight: 1.6, maxWidth: '880px', margin: 0 }}>
+          To measure whether Qloo taste graph integration genuinely improves touring outcomes or is merely marketing
+          gloss, we constructed an empirical benchmark against verified historical tours from <strong>Setlist.fm</strong>.
+          We test <strong>emerging post-cutoff artists</strong> to eliminate LLM training memorization shortcuts.
         </p>
       </div>
 
-      {/* Artist Case Selector Tabs */}
-      <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+      {/* Case Selector */}
+      <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
         {GROUND_TRUTH_BACKTEST_CASES.map((bc) => {
           const isSelected = bc.id === activeCase.id;
           return (
@@ -63,52 +56,66 @@ export const ReceiptsView: React.FC = () => {
               onClick={() => setSelectedCaseId(bc.id)}
               id={`tab-receipts-${bc.id}`}
               style={{
-                padding: '10px 18px',
-                borderRadius: '10px',
-                background: isSelected
-                  ? 'linear-gradient(135deg, #8b5cf6, #6366f1)'
-                  : 'rgba(255, 255, 255, 0.04)',
-                border: isSelected
-                  ? '1px solid #8b5cf6'
-                  : '1px solid rgba(255, 255, 255, 0.08)',
-                color: isSelected ? '#ffffff' : '#94a3b8',
-                fontWeight: isSelected ? 700 : 500,
+                padding: '8px 14px',
+                borderRadius: '6px',
+                background: isSelected ? '#1f2937' : '#111620',
+                border: isSelected ? '1px solid #38bdf8' : '1px solid #212836',
+                color: isSelected ? '#f8fafc' : '#8b949e',
+                fontWeight: isSelected ? 600 : 400,
                 fontSize: '13px',
                 display: 'flex',
                 alignItems: 'center',
                 gap: '8px',
               }}
             >
-              <Zap size={14} color={isSelected ? '#ffffff' : '#64748b'} />
+              <FileText size={13} color={isSelected ? '#38bdf8' : '#64748b'} />
               <span>{bc.artist} ({bc.year})</span>
             </button>
           );
         })}
       </div>
 
-      {/* Case Overview & High-Level Scorecard */}
+      {/* Head-to-Head Benchmark Card */}
       <div
-        className="glass-panel"
         style={{
-          padding: '24px',
+          padding: '20px 24px',
+          borderRadius: '8px',
+          border: '1px solid #30363d',
+          backgroundColor: '#161b22',
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-          gap: '20px',
+          gridTemplateColumns: 'minmax(300px, 1fr) minmax(320px, 420px)',
+          gap: '24px',
+          alignItems: 'center',
         }}
       >
         <div>
-          <span className="badge badge-purple" style={{ marginBottom: '8px' }}>
-            {activeCase.genre}
-          </span>
-          <h3 style={{ fontSize: '22px', fontWeight: 800, color: '#ffffff', marginTop: '4px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+            <span
+              style={{
+                fontFamily: 'ui-monospace, monospace',
+                fontSize: '11px',
+                padding: '2px 6px',
+                borderRadius: '4px',
+                backgroundColor: '#212836',
+                color: '#94a3b8',
+                border: '1px solid #30363d',
+              }}
+            >
+              {activeCase.genre}
+            </span>
+            <span style={{ fontSize: '12px', color: '#64748b' }}>
+              Ground-truth: {activeCase.groundTruthStops.length} verified dates
+            </span>
+          </div>
+          <h3 style={{ fontSize: '20px', fontWeight: 700, color: '#f0f6fc', marginTop: '4px' }}>
             {activeCase.artist}: {activeCase.tourName}
           </h3>
-          <p style={{ fontSize: '13px', color: '#94a3b8', marginTop: '6px', lineHeight: 1.5 }}>
+          <p style={{ fontSize: '13px', color: '#8b949e', marginTop: '6px', lineHeight: 1.5, margin: 0 }}>
             {activeCase.description}
           </p>
         </div>
 
-        {/* Head-to-Head Metrics Widget */}
+        {/* Scorecard */}
         <div
           style={{
             display: 'grid',
@@ -116,68 +123,72 @@ export const ReceiptsView: React.FC = () => {
             gap: '12px',
           }}
         >
-          {/* LLM Only Card */}
+          {/* Baseline */}
           <div
             style={{
-              background: 'rgba(244, 63, 94, 0.06)',
-              border: '1px solid rgba(244, 63, 94, 0.25)',
-              borderRadius: '12px',
-              padding: '14px',
-              textAlign: 'center',
+              background: '#0d1117',
+              border: '1px solid #30363d',
+              borderRadius: '6px',
+              padding: '12px 14px',
             }}
           >
-            <div style={{ fontSize: '11px', fontWeight: 700, color: '#fda4af', textTransform: 'uppercase' }}>
-              LLM-Only Agent
+            <div style={{ fontSize: '11px', fontFamily: 'ui-monospace, monospace', color: '#f87171', fontWeight: 600 }}>
+              LLM BASELINE
             </div>
-            <div style={{ fontSize: '26px', fontWeight: 800, color: '#f43f5e', margin: '4px 0' }}>
+            <div style={{ fontSize: '24px', fontWeight: 700, color: '#f87171', fontFamily: 'ui-monospace, monospace', marginTop: '4px' }}>
               {activeCase.llmMetrics.precisionAt10}%
             </div>
-            <div style={{ fontSize: '11px', color: '#94a3b8' }}>
+            <div style={{ fontSize: '11.5px', color: '#8b949e', marginTop: '2px' }}>
               Precision@10 (NDCG {activeCase.llmMetrics.ndcg10})
             </div>
-            <div style={{ fontSize: '11px', color: '#fda4af', marginTop: '4px', fontWeight: 600 }}>
-              +{activeCase.llmMetrics.wastedTravelMiles} mi wasted
+            <div style={{ fontSize: '11px', color: '#fca5a5', marginTop: '6px', fontFamily: 'ui-monospace, monospace' }}>
+              +{activeCase.llmMetrics.wastedTravelMiles} mi zigzag transit
             </div>
           </div>
 
-          {/* Roadie Qloo Card */}
+          {/* Roadie */}
           <div
             style={{
-              background: 'rgba(16, 185, 129, 0.08)',
-              border: '1px solid rgba(16, 185, 129, 0.35)',
-              borderRadius: '12px',
-              padding: '14px',
-              textAlign: 'center',
-              boxShadow: '0 0 20px rgba(16, 185, 129, 0.1)',
+              background: '#0d1117',
+              border: '1px solid #238636',
+              borderRadius: '6px',
+              padding: '12px 14px',
             }}
           >
-            <div style={{ fontSize: '11px', fontWeight: 700, color: '#6ee7b7', textTransform: 'uppercase' }}>
-              Roadie (Qloo Grounded)
+            <div style={{ fontSize: '11px', fontFamily: 'ui-monospace, monospace', color: '#3fb950', fontWeight: 600 }}>
+              ROADIE (QLOO GROUNDED)
             </div>
-            <div style={{ fontSize: '26px', fontWeight: 800, color: '#10b981', margin: '4px 0' }}>
+            <div style={{ fontSize: '24px', fontWeight: 700, color: '#3fb950', fontFamily: 'ui-monospace, monospace', marginTop: '4px' }}>
               {activeCase.roadieMetrics.precisionAt10}%
             </div>
-            <div style={{ fontSize: '11px', color: '#94a3b8' }}>
+            <div style={{ fontSize: '11.5px', color: '#8b949e', marginTop: '2px' }}>
               Precision@10 (NDCG {activeCase.roadieMetrics.ndcg10})
             </div>
-            <div style={{ fontSize: '11px', color: '#34d399', marginTop: '4px', fontWeight: 600 }}>
-              0 miles wasted transit
+            <div style={{ fontSize: '11px', color: '#7ee787', marginTop: '6px', fontFamily: 'ui-monospace, monospace' }}>
+              0 mi wasted transit
             </div>
           </div>
         </div>
       </div>
 
-      {/* Side-by-Side City Rankings Comparison Table */}
+      {/* 3-Column Comparative Evaluation Table */}
       <div
-        className="glass-panel"
         style={{
-          padding: '24px',
+          borderRadius: '8px',
+          border: '1px solid #30363d',
+          backgroundColor: '#161b22',
+          padding: '20px 24px',
           overflowX: 'auto',
         }}
       >
-        <h3 style={{ fontSize: '17px', fontWeight: 700, marginBottom: '16px', color: '#ffffff' }}>
-          Side-by-Side Prediction Breakdown
-        </h3>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+          <h3 style={{ fontSize: '15px', fontWeight: 600, color: '#f0f6fc', margin: 0 }}>
+            Market Selection Breakdown
+          </h3>
+          <span style={{ fontSize: '12px', color: '#8b949e' }}>
+            Green indicator marks exact match against actual historical tour
+          </span>
+        </div>
 
         <div
           style={{
@@ -187,100 +198,86 @@ export const ReceiptsView: React.FC = () => {
             minWidth: '780px',
           }}
         >
-          {/* Column 1: Ground Truth */}
+          {/* Ground Truth Column */}
           <div>
             <div
               style={{
-                padding: '10px 14px',
-                background: 'rgba(255, 255, 255, 0.04)',
-                borderRadius: '8px',
-                fontWeight: 700,
-                fontSize: '13px',
-                color: '#e2e8f0',
+                padding: '8px 12px',
+                background: '#0d1117',
+                border: '1px solid #30363d',
+                borderRadius: '6px',
+                fontWeight: 600,
+                fontSize: '12px',
+                color: '#f0f6fc',
                 marginBottom: '10px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px',
+                fontFamily: 'ui-monospace, monospace',
               }}
             >
-              <Award size={15} color="#e2e8f0" />
-              <span>Real Tour Ground Truth ({activeCase.groundTruthStops.length} dates)</span>
+              Setlist.fm Ground Truth ({activeCase.groundTruthStops.length} stops)
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
               {activeCase.groundTruthStops.map((stop, i) => (
                 <div
                   key={i}
                   style={{
-                    padding: '8px 12px',
-                    borderRadius: '6px',
-                    background: 'rgba(255, 255, 255, 0.02)',
-                    border: '1px solid rgba(255, 255, 255, 0.05)',
-                    fontSize: '12.5px',
+                    padding: '8px 10px',
+                    borderRadius: '4px',
+                    background: '#0d1117',
+                    border: '1px solid #21262d',
+                    fontSize: '12px',
                   }}
                 >
-                  <div style={{ fontWeight: 600, color: '#f1f5f9' }}>
+                  <div style={{ fontWeight: 600, color: '#f0f6fc' }}>
                     {stop.city}, {stop.state}
                   </div>
-                  <div style={{ fontSize: '11px', color: '#94a3b8' }}>{stop.venue}</div>
+                  <div style={{ fontSize: '11px', color: '#8b949e' }}>{stop.venue}</div>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Column 2: LLM-Only Baseline */}
+          {/* Vanilla LLM Column */}
           <div>
             <div
               style={{
-                padding: '10px 14px',
-                background: 'rgba(244, 63, 94, 0.1)',
-                borderRadius: '8px',
-                fontWeight: 700,
-                fontSize: '13px',
-                color: '#fda4af',
+                padding: '8px 12px',
+                background: '#0d1117',
+                border: '1px solid #30363d',
+                borderRadius: '6px',
+                fontWeight: 600,
+                fontSize: '12px',
+                color: '#f87171',
                 marginBottom: '10px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px',
+                fontFamily: 'ui-monospace, monospace',
               }}
             >
-              <XCircle size={15} color="#f43f5e" />
-              <span>LLM-Only Baseline (Population Bias)</span>
+              Ungrounded LLM Baseline (Population Bias)
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
               {activeCase.llmBaselineStops.map((stop, i) => {
                 const isMatch = groundTruthCityNames.has(stop.city.toLowerCase());
                 return (
                   <div
                     key={i}
                     style={{
-                      padding: '8px 12px',
-                      borderRadius: '6px',
-                      background: isMatch
-                        ? 'rgba(16, 185, 129, 0.05)'
-                        : 'rgba(244, 63, 94, 0.08)',
-                      border: isMatch
-                        ? '1px solid rgba(16, 185, 129, 0.2)'
-                        : '1px solid rgba(244, 63, 94, 0.25)',
-                      fontSize: '12.5px',
+                      padding: '8px 10px',
+                      borderRadius: '4px',
+                      background: isMatch ? 'rgba(63, 185, 80, 0.06)' : 'rgba(248, 81, 73, 0.06)',
+                      border: isMatch ? '1px solid rgba(63, 185, 80, 0.25)' : '1px solid rgba(248, 81, 73, 0.25)',
+                      fontSize: '12px',
                     }}
                   >
-                    <div
-                      style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                      }}
-                    >
-                      <span style={{ fontWeight: 600, color: isMatch ? '#6ee7b7' : '#fca5a5' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ fontWeight: 600, color: isMatch ? '#7ee787' : '#ffa198' }}>
                         #{stop.rank} {stop.city}, {stop.state}
                       </span>
                       {isMatch ? (
-                        <CheckCircle2 size={13} color="#10b981" />
+                        <CheckCircle2 size={13} color="#3fb950" />
                       ) : (
-                        <XCircle size={13} color="#f43f5e" />
+                        <XCircle size={13} color="#f85149" />
                       )}
                     </div>
-                    <div style={{ fontSize: '11px', color: '#94a3b8', marginTop: '2px' }}>
+                    <div style={{ fontSize: '11px', color: '#8b949e', marginTop: '2px' }}>
                       {stop.rationale}
                     </div>
                   </div>
@@ -289,60 +286,54 @@ export const ReceiptsView: React.FC = () => {
             </div>
           </div>
 
-          {/* Column 3: Roadie Qloo Grounded */}
+          {/* Roadie Qloo Column */}
           <div>
             <div
               style={{
-                padding: '10px 14px',
-                background: 'rgba(16, 185, 129, 0.12)',
-                borderRadius: '8px',
-                fontWeight: 700,
-                fontSize: '13px',
-                color: '#6ee7b7',
+                padding: '8px 12px',
+                background: '#0d1117',
+                border: '1px solid #238636',
+                borderRadius: '6px',
+                fontWeight: 600,
+                fontSize: '12px',
+                color: '#3fb950',
                 marginBottom: '10px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px',
+                fontFamily: 'ui-monospace, monospace',
               }}
             >
-              <CheckCircle2 size={15} color="#10b981" />
-              <span>Roadie (Qloo Grounded)</span>
+              Roadie (Qloo Affinity Grounded)
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
               {activeCase.roadieQlooStops.map((stop, i) => {
                 const isMatch = groundTruthCityNames.has(stop.city.toLowerCase());
                 return (
                   <div
                     key={i}
                     style={{
-                      padding: '8px 12px',
-                      borderRadius: '6px',
-                      background: 'rgba(16, 185, 129, 0.08)',
-                      border: '1px solid rgba(16, 185, 129, 0.3)',
-                      fontSize: '12.5px',
+                      padding: '8px 10px',
+                      borderRadius: '4px',
+                      background: 'rgba(63, 185, 80, 0.08)',
+                      border: '1px solid rgba(63, 185, 80, 0.3)',
+                      fontSize: '12px',
                     }}
                   >
-                    <div
-                      style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                      }}
-                    >
-                      <span style={{ fontWeight: 600, color: '#6ee7b7' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <span style={{ fontWeight: 600, color: '#7ee787', display: 'flex', alignItems: 'center', gap: '6px' }}>
                         #{stop.rank} {stop.city}, {stop.state}
+                        {isMatch && <CheckCircle2 size={12} color="#3fb950" />}
                       </span>
                       <span
                         style={{
-                          fontSize: '11px',
-                          color: '#34d399',
-                          fontWeight: 700,
+                          fontSize: '10.5px',
+                          color: '#7ee787',
+                          fontFamily: 'ui-monospace, monospace',
+                          fontWeight: 600,
                         }}
                       >
-                        {stop.affinityScore}/100
+                        Qloo: {stop.affinityScore}/100
                       </span>
                     </div>
-                    <div style={{ fontSize: '11px', color: '#94a3b8', marginTop: '2px' }}>
+                    <div style={{ fontSize: '11px', color: '#8b949e', marginTop: '2px' }}>
                       {stop.rationale}
                     </div>
                   </div>
@@ -353,34 +344,35 @@ export const ReceiptsView: React.FC = () => {
         </div>
       </div>
 
-      {/* Deep-Dive Analysis & Why Qloo Wins */}
+      {/* Engineering Analysis & Findings */}
       <div
-        className="glass-panel"
         style={{
-          padding: '24px',
-          border: '1px solid rgba(139, 92, 246, 0.25)',
+          padding: '20px 24px',
+          borderRadius: '8px',
+          border: '1px solid #30363d',
+          backgroundColor: '#161b22',
         }}
       >
-        <h3 style={{ fontSize: '17px', fontWeight: 700, color: '#ffffff', marginBottom: '8px' }}>
-          Why Cultural Intelligence Was the Difference
+        <h3 style={{ fontSize: '15px', fontWeight: 600, color: '#f0f6fc', marginBottom: '8px' }}>
+          Backtest Evaluation Findings
         </h3>
-        <p style={{ fontSize: '14px', color: '#cbd5e1', lineHeight: '1.6', marginBottom: '16px' }}>
+        <p style={{ fontSize: '13px', color: '#8b949e', lineHeight: 1.6, marginBottom: '14px' }}>
           {activeCase.analysis}
         </p>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
           {activeCase.whyQlooWins.map((point, idx) => (
             <div
               key={idx}
               style={{
                 display: 'flex',
                 alignItems: 'flex-start',
-                gap: '10px',
-                fontSize: '13px',
-                color: '#e2e8f0',
+                gap: '8px',
+                fontSize: '12.5px',
+                color: '#c9d1d9',
               }}
             >
-              <CheckCircle2 size={16} color="#10b981" style={{ flexShrink: 0, marginTop: '2px' }} />
+              <CheckCircle2 size={14} color="#3fb950" style={{ flexShrink: 0, marginTop: '2px' }} />
               <span>{point}</span>
             </div>
           ))}

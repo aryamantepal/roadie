@@ -148,7 +148,7 @@ export function buildTourSchedule(
   const totalDays = Math.max(1, Math.round((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)) + 1);
 
   const stops: TourStop[] = [];
-  let currentDate = new Date(startDate);
+  const currentDate = new Date(startDate);
   let candidateIndex = 0;
   let consecutiveShows = 0;
   let prevLat = orderedCandidates[0]?.market.lat;

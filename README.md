@@ -1,7 +1,6 @@
-# Roadie 🎸🗺️
+# Roadie
 
-> **A tour-routing agent for independent musicians.**  
-> *Roadie tells an indie artist where their fans actually are, and plans the tour to reach them.*
+> Tour routing agent for independent musicians, combining Qloo cultural taste graphs with deterministic vehicle routing.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js)](https://nextjs.org/)
@@ -10,82 +9,99 @@
 
 ---
 
-## 🎯 The Problem
+## The Problem
 
-Mid-size independent artists route tours on gut feel and a booking agent's memory. They waste tour dates in major population centers where they have no organic audience and miss the specific cultural hubs where they would sell out. 
+Independent bands route tours on gut feel and fragmented promoter relationships. They frequently waste dates in major population centers where they have no organic audience while missing smaller cultural hubs where they would sell out.
 
-Standard LLM-only tools make this worse: they default to raw Metropolitan Statistical Area (MSA) population rankings—recommending Houston, Phoenix, San Antonio, and Miami regardless of genre—leading to half-empty rooms, thousands of wasted highway miles, and burnt-out bands.
-
----
-
-## ⚡ What Roadie Does
-
-Enter an artist's name and a date window. Roadie autonomously executes a 4-step workflow:
-
-1. **Finds the audience:** Queries [Qloo’s cultural taste graph](https://qloo.com/) (250M+ entities across music, dining, fashion, and retail) to rank the exact cities and neighborhoods that over-index on this artist and their stylistic peers.
-2. **Picks the rooms:** Matches right-sized venues in those specific markets (via Ticketmaster Discovery API and our curated indie network) based on the band's target room capacity (e.g., 250-cap club vs. 850-cap ballroom).
-3. **Routes the tour:** Builds a drivable, realistic itinerary using deterministic 2-Opt TSP optimization rather than an LLM. Enforces van tour realities: max 320 miles/day and mandatory rest/travel days after consecutive dates.
-4. **Markets each stop:** Discovers a taste-matched local opener, an aligned neighborhood pop-up partner (independent record store or craft cocktail bar), and drafts a promoter hold inquiry email backed by local affinity data.
+Generic language models make this worse due to **population bias**: prompted to route an indie tour, they default to the largest Metropolitan Statistical Areas (Los Angeles, New York, Chicago, Houston, Phoenix) regardless of subcultural scene, while hallucinating exhausting 14-hour overnight zigzag drives.
 
 ---
 
-## 🔮 Why Qloo Is Essential
+## System Overview
 
-An LLM alone names the obvious big markets (Los Angeles, New York, Chicago, Houston). **Remove Qloo and you are left with an undifferentiated map of venues.**
+Given an artist name, date window, and target room capacity, Roadie executes an autonomous agent loop:
 
-Roadie finds the specific, non-obvious markets where this specific fanbase actually lives. For example, for an emerging art-punk or post-punk act, Qloo reveals that **Asheville, NC** (population ~94,000) indexes at **1.76x the national average affinity**, outperforming cities ten times its size.
+1. **Audience Affinity:** Queries Qloo's taste graph (250M+ entities across music, dining, and retail) to rank geographic markets by subcultural affinity ratio rather than raw population.
+2. **Venue Matching:** Filters right-sized rooms (via Ticketmaster Discovery API and verified indie venue network) matching the target capacity bracket (e.g. 250-cap club vs 850-cap ballroom).
+3. **Deterministic Routing:** Solves a constrained 2-Opt Traveling Salesperson Problem (TSP) with hard touring limits: max 320 miles/day and mandatory rest days every 3 shows.
+4. **Cultural Activation:** Recommends a high-affinity local opener and a taste-matched neighborhood anchor (independent record store or craft bar), and drafts a promoter inquiry email backed by local affinity data.
 
 ---
 
-## 📊 The Receipts: Ground-Truth Tour Backtest
+## Agent Architecture
 
-Roadie includes an empirical backtesting suite in **"The Receipts"** tab. We benchmarked an LLM-only routing agent against Qloo-grounded Roadie using verified, real-world past tours from **Setlist.fm**.
+Roadie avoids fragile unconstrained multi-step LLM chains. The agent orchestrates **5 thin, deterministic tools**, with preconditions strictly enforced inside each tool before execution:
 
-> **Integrity Note:** To eliminate training-data leakage, the backtest evaluates emerging breakout artists with tours post-dating the LLM training cutoff (e.g., **Geese**, **The Last Dinner Party**, **Mk.gee**).
+```mermaid
+flowchart TD
+    subgraph Inputs["1. Tour Request & Bounds"]
+        In1["Artist Profile & Genre"]
+        In2["Date Window & Corridor"]
+        In3["Capacity Tier (e.g. 250-cap club)"]
+    end
 
-| Evaluation Metric | LLM-Only Baseline | Roadie (Qloo Grounded) | Impact / Delta |
+    subgraph Core["2. ReAct Agent Loop"]
+        Orch["Agent Orchestrator (Typed State Machine)"]
+    end
+
+    subgraph Tools["3. Deterministic Tools (Preconditions In-Tool)"]
+        T1["audience_affinity<br/><b>Qloo API:</b> 250M+ Entity Taste Graph<br/><i>Ranks markets by affinity ratio</i>"]
+        T2["find_venues<br/><b>Ticketmaster & Curated Indie Venues:</b><br/><i>Filters verified room sizes</i>"]
+        T3["local_taste<br/><b>Qloo Cross-Domain Affinities:</b><br/><i>Pairs local openers & cultural spots</i>"]
+        T4["build_route<br/><b>Deterministic TSP (2-Opt Algorithm):</b><br/><i>Calculates drivable mileage & rest days</i>"]
+        T5["draft_pitch<br/><b>Promoter Pitch Engine:</b><br/><i>Cites local Qloo metrics & synergies</i>"]
+    end
+
+    subgraph Validation["4. Touring Circuit Breakers"]
+        V1["Max Daily Drive: 320 miles"]
+        V2["Rest Cadence: Max 3 consecutive shows"]
+        V3["Market Radius: Min 45 mi between stops"]
+    end
+
+    subgraph Artifacts["5. Tour Execution Artifacts"]
+        Out1["Day-by-Day Route Itinerary"]
+        Out2["Geographic Drive-Time Map"]
+        Out3["Promoter Pitch Packets with Qloo Data"]
+    end
+
+    Inputs --> Orch
+    Orch -->|Step 1: Rank Markets| T1
+    T1 -.->|Affinity Scores| Orch
+    Orch -->|Step 2: Match Venues| T2
+    T2 -.->|Verified Rooms| Orch
+    Orch -->|Step 3: Cultural Context| T3
+    T3 -.->|Openers & Pop-ups| Orch
+    Orch -->|Step 4: Optimize Sequence| T4
+    T4 --> Validation
+    Validation -->|Verified Routing| Orch
+    Orch -->|Step 5: Generate Pitches| T5
+    T5 -.->|Pitch Emails| Out3
+    Orch --> Out1
+    Orch --> Out2
+```
+
+- **Execution Tracing:** Every tool invocation records duration, input parameters, precondition validation status, and structured outputs in an inspectable trace.
+- **Circuit Breakers:** Non-negotiable physical constraints (max 320 miles/day, mandatory rest days) cannot be overridden by LLM reasoning.
+- **Credential Isolation:** API keys run strictly in server-side Next.js route handlers and are never exposed to the client.
+
+---
+
+## The Receipts: Empirical Tour Backtest
+
+Roadie includes an empirical backtesting suite in **"The Receipts"** tab. We benchmarked an ungrounded LLM against Qloo-grounded Roadie using verified past tours from **Setlist.fm**.
+
+To prevent training-data leakage, the backtest evaluates emerging breakout artists with breakout tours post-dating standard LLM cutoff dates (e.g., **Geese**, **The Last Dinner Party**, **Mk.gee**).
+
+| Evaluation Metric | Ungrounded LLM Baseline | Roadie (Qloo Grounded) | Delta |
 | :--- | :---: | :---: | :---: |
-| **Precision@10** | **30% - 43%** | **100%** | **+2.5x to 3.3x Accuracy** |
-| **NDCG@10 (Rank Correlation)** | 0.38 - 0.49 | **0.96 - 0.98** | Near-perfect stop prioritization |
-| **Wasted Highway Transit** | 2,350 – 2,980 miles | **0 miles** | Eliminates dead routing legs |
-| **Market Discovery** | Missed Asheville, East Atlanta, Montreal, Salt Lake City | Correctly predicted all breakout dates | High-conversion indie rooms |
+| **Precision@10** | **30% - 43%** | **80% - 100%** | **+2.3x to 3.3x Accuracy** |
+| **NDCG@10 (Rank Correlation)** | 0.38 - 0.49 | **0.96 - 0.98** | High rank agreement with real booking |
+| **Wasted Highway Transit** | 2,350 – 2,980 miles | **0 miles** | Eliminates impossible zig-zag legs |
+| **Market Discovery** | Defaulted to Houston, Phoenix, Dallas | Correctly identified Asheville, Burlington, Columbus | Found real indie scenes |
 
 ---
 
-## 🏗️ Architecture & System Design
-
-Roadie pairs an autonomous agent loop with **5 thin, deterministic tools**. Preconditions are strictly enforced **inside each tool**, rather than in an inflexible pipeline:
-
-```
-[ User Input: Artist + Dates + Region + Room Tier ]
-                     │
-                     ▼
-          ┌─────────────────────┐
-          │     Roadie Agent    │
-          │   Autonomous Loop   │
-          └──────────┬──────────┘
-                     │
-    ┌────────────────┼────────────────┬────────────────┬────────────────┐
-    ▼                ▼                ▼                ▼                ▼
-┌──────────────┐ ┌──────────────┐ ┌──────────────┐ ┌──────────────┐ ┌──────────────┐
-│ Tool 1:      │ │ Tool 2:      │ │ Tool 3:      │ │ Tool 4:      │ │ Tool 5:      │
-│ audience_    │ │ find_        │ │ local_       │ │ build_       │ │ draft_       │
-│ affinity     │ │ venues       │ │ taste        │ │ route        │ │ pitch        │
-├──────────────┤ ├──────────────┤ ├──────────────┤ ├──────────────┤ ├──────────────┤
-│ Qloo Taste   │ │ Ticketmaster │ │ Qloo Cross-  │ │ Deterministic│ │ Data-backed  │
-│ Graph Geo-   │ │ Discovery +  │ │ Domain: Bar, │ │ 2-Opt TSP &  │ │ Promoter     │
-│ Affinity     │ │ Indie Rooms  │ │ Record Store,│ │ Band Off-Day │ │ Pitch Email  │
-│ Over-index   │ │ Matching     │ │ Opener Match │ │ Scheduling   │ │ Generator    │
-└──────────────┘ └──────────────┘ └──────────────┘ └──────────────┘ └──────────────┘
-```
-
-- **Execution Tracing:** Every tool call logs its inputs, duration, precondition validation status, and summary in an inspectable trace.
-- **Parallel Subagents:** Spawned for head-to-head backtesting runs to benchmark the LLM baseline against Qloo.
-- **Secrets Isolation:** All API credentials (`QLOO_API_KEY`, `TICKETMASTER_API_KEY`) run strictly in server-side Next.js route handlers and are never exposed to the client.
-
----
-
-## 🚀 Quick Start
+## Quick Start
 
 ### 1. Clone the repository
 
@@ -108,14 +124,14 @@ Copy `.env.example` to `.env.local`:
 cp .env.example .env.local
 ```
 
-Add your API credentials:
+Add your credentials:
 
 ```env
 # Qloo API (Cultural Intelligence & Taste Graph)
 QLOO_API_KEY=your_qloo_api_key_here
 QLOO_BASE_URL=https://api.qloo.com/v1
 
-# Ticketmaster Discovery API (Optional - curated rooms work out of the box)
+# Ticketmaster Discovery API (Optional - curated rooms available out of the box)
 TICKETMASTER_API_KEY=your_ticketmaster_api_key_here
 ```
 
@@ -131,9 +147,9 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ---
 
-## 🧪 Running End-to-End Tests
+## Running End-to-End Tests
 
-Roadie includes an automated [Playwright](https://playwright.dev/) test suite verifying route generation, map projection, promoter pitch copy, and backtest metrics:
+Roadie includes an automated [Playwright](https://playwright.dev/) test suite verifying route generation, map projection, promoter pitch generation, and backtest metrics:
 
 ```bash
 npm run test:e2e
@@ -142,23 +158,22 @@ npm run test:e2e
 To run Playwright against a deployed URL:
 
 ```bash
-BASE_URL=https://your-roadie-deployment.vercel.app npx playwright test
+BASE_URL=https://roadie-seven-mu.vercel.app npx playwright test
 ```
 
 ---
 
-## 📦 Tech Stack
+## Tech Stack
 
-- **Framework:** [Next.js](https://nextjs.org/) (App Router, React 19, TypeScript)
-- **Cultural Taste Graph:** [Qloo API](https://qloo.com/) (Location Heatmaps, Entity Affinities, Cross-Domain Intelligence)
-- **Venue Discovery:** [Ticketmaster Discovery API](https://developer.ticketmaster.com/) + Curated Indie Venue Network
+- **Framework:** Next.js 16 (App Router, React 19, TypeScript)
+- **Cultural Intelligence:** Qloo API (Location Heatmaps, Cross-Domain Affinity)
+- **Venue Discovery:** Ticketmaster Discovery API + Curated Indie Network
 - **Routing Engine:** Deterministic Haversine & 2-Opt TSP Optimizer
-- **Map Visualization:** Responsive SVG Geographic Vector Projection Canvas
-- **Design:** Modern Obsidian Dark Mode with Glassmorphism, CSS Custom Properties, and Micro-interactions
+- **Diagrams:** Mermaid.js client-side interactive rendering
 - **Testing:** Playwright E2E Suite
 
 ---
 
-## 📄 License
+## License
 
-This project is open-source and available under the [MIT License](LICENSE).
+MIT
