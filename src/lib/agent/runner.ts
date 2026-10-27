@@ -57,16 +57,16 @@ export class RoadieAgent {
     const targetMarkets = filteredMarkets.slice(0, 8); // Top candidates for route window
 
     // --- STEP 2: Match Right-Sized Rooms via Venue Discovery ---
-    const candidates: RouteCandidate[] = [];
     const step2Start = Date.now();
-    for (const market of targetMarkets) {
+    const candidatePromises = targetMarkets.map(async (market) => {
       const venue: Venue = await toolFindVenues(
         market.city,
         market.state,
         input.capacityTier
       );
-      candidates.push({ market, venue });
-    }
+      return { market, venue };
+    });
+    const candidates: RouteCandidate[] = await Promise.all(candidatePromises);
     recordStep(
       'find_venues',
       { targetMarketsCount: targetMarkets.length, capacityTier: input.capacityTier },
@@ -91,8 +91,7 @@ export class RoadieAgent {
 
     // --- STEP 4 & 5: Local Taste Enrichment & Promoter Pitch Emails ---
     const step4Start = Date.now();
-    let enrichedCount = 0;
-    for (const stop of scheduledStops) {
+    const enrichPromises = scheduledStops.map(async (stop) => {
       if (!stop.isOffDay && stop.affinityMarket && stop.venue) {
         // Tool 3: Local Taste
         const localTaste = await toolLocalTaste(input.name, stop.city);
@@ -112,9 +111,13 @@ export class RoadieAgent {
           localTaste
         );
         stop.pitchEmail = pitchEmail;
-        enrichedCount++;
+        return 1;
       }
-    }
+      return 0;
+    });
+
+    const enrichResults = await Promise.all(enrichPromises);
+    const enrichedCount = enrichResults.reduce((acc: number, val: number) => acc + val, 0);
     recordStep(
       'local_taste',
       { enrichedStops: enrichedCount },

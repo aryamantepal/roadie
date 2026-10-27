@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { TourStop } from '@/types';
-import { Mail, Copy, Check, X, Building2, TrendingUp } from 'lucide-react';
+import { Copy, Check, X, Building2, TrendingUp, Sparkles } from 'lucide-react';
 
 interface PromoterPitchModalProps {
   stop: TourStop | null;
@@ -29,118 +29,126 @@ export const PromoterPitchModal: React.FC<PromoterPitchModalProps> = ({
 
   const market = stop.affinityMarket;
   const venue = stop.venue;
+  const taste = stop.localTaste;
 
   return (
     <div
       style={{
         position: 'fixed',
         inset: 0,
-        backgroundColor: 'rgba(0, 0, 0, 0.75)',
+        backgroundColor: 'oklch(24% 0.030 260 / 0.45)',
+        backdropFilter: 'blur(8px)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         zIndex: 9999,
-        padding: '20px',
+        padding: '24px',
       }}
       onClick={onClose}
     >
       <div
-        className="glass-panel"
         style={{
           width: '100%',
           maxWidth: '680px',
           maxHeight: '90vh',
           display: 'flex',
           flexDirection: 'column',
-          backgroundColor: '#161b22',
-          border: '1px solid #30363d',
-          borderRadius: '8px',
-          boxShadow: '0 10px 30px rgba(0, 0, 0, 0.6)',
+          backgroundColor: 'var(--paper)',
+          border: '1px solid var(--rule)',
+          borderRadius: 'var(--r-card)',
+          boxShadow: '0 24px 60px -24px oklch(24% 0.030 260 / 0.35)',
           overflow: 'hidden',
         }}
         onClick={(e) => e.stopPropagation()}
         id="promoter-pitch-modal-container"
       >
-        {/* Header */}
+        {/* Modal Header */}
         <div
           style={{
-            padding: '16px 20px',
-            borderBottom: '1px solid #21262d',
+            padding: '18px 24px',
+            borderBottom: '1px solid var(--rule)',
             display: 'flex',
             justifyContent: 'space-between',
-            alignItems: 'center',
-            backgroundColor: '#0d1117',
+            alignItems: 'baseline',
+            backgroundColor: 'var(--paper)',
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Mail size={16} color="#38bdf8" />
-            <div>
-              <h3 style={{ fontSize: '15px', fontWeight: 600, color: '#f0f6fc', margin: 0 }}>
-                Promoter Pitch Email
-              </h3>
-              <p style={{ fontSize: '12px', color: '#8b949e', margin: 0 }}>
-                {artistName} • {stop.city}, {stop.state} • {venue?.name}
-              </p>
-            </div>
+          <div>
+            <span className="ov" style={{ marginBottom: '2px' }}>Talent Buyer Brief</span>
+            <h3 style={{ fontSize: '18px', fontWeight: 500, color: 'var(--ink)', margin: 0 }}>
+              Promoter Pitch Email
+            </h3>
+            <p style={{ fontSize: '12.5px', color: 'var(--ink-3)', margin: 0, marginTop: '2px' }}>
+              {artistName} • {stop.city}, {stop.state} • {venue?.name || 'Local Venue'}
+            </p>
           </div>
 
           <button
             onClick={onClose}
             id="btn-close-pitch-modal"
             style={{
-              background: 'transparent',
-              color: '#8b949e',
-              padding: '4px',
-              borderRadius: '4px',
+              background: 'var(--paper-2)',
+              border: '1px solid var(--rule)',
+              color: 'var(--ink-2)',
+              padding: '6px',
+              borderRadius: 'var(--r-control)',
+              cursor: 'pointer',
             }}
           >
-            <X size={18} />
+            <X size={15} />
           </button>
         </div>
 
-        {/* Intelligence highlights bar */}
+        {/* Intelligence Briefing Strip */}
         <div
           style={{
-            padding: '10px 20px',
-            backgroundColor: '#161d2b',
-            borderBottom: '1px solid #212836',
+            padding: '10px 24px',
+            backgroundColor: 'var(--paper-2)',
+            borderBottom: '1px solid var(--rule)',
             display: 'flex',
             flexWrap: 'wrap',
-            gap: '14px',
+            gap: '16px',
             fontSize: '12px',
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#c9d1d9' }}>
-            <Building2 size={13} color="#8b949e" />
-            <span>Target: {venue?.capacity} Cap Room</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--ink-2)' }}>
+            <Building2 size={13} color="var(--ink-3)" />
+            <span className="num">Target: {venue?.capacity} Cap Room</span>
           </div>
           {market && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#34d399', fontFamily: 'ui-monospace, monospace' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--emerald)' }}>
               <TrendingUp size={13} />
-              <span>Qloo Affinity: {market.affinityScore}/100 (+{Math.round((market.indexRatio - 1) * 100)}%)</span>
+              <span className="num">Qloo Affinity: {market.affinityScore}/100 (+{Math.round((market.indexRatio - 1) * 100)}% density)</span>
+            </div>
+          )}
+          {taste && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--signal)' }}>
+              <Sparkles size={12} />
+              <span>Opener: {taste.opener.name}</span>
             </div>
           )}
         </div>
 
-        {/* Email body container */}
+        {/* Email Document Body */}
         <div
           style={{
-            padding: '20px',
+            padding: '22px 24px',
             overflowY: 'auto',
             flex: 1,
+            backgroundColor: 'var(--paper)',
           }}
         >
           <pre
             style={{
-              fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
+              fontFamily: 'var(--font-mono)',
               whiteSpace: 'pre-wrap',
               fontSize: '12.5px',
-              lineHeight: 1.6,
-              color: '#f0f6fc',
-              background: '#0d1117',
-              padding: '16px',
-              borderRadius: '6px',
-              border: '1px solid #212836',
+              lineHeight: 1.65,
+              color: 'var(--ink)',
+              background: 'var(--paper-2)',
+              padding: '18px 20px',
+              borderRadius: 'var(--r-control)',
+              border: '1px solid var(--rule)',
               margin: 0,
             }}
           >
@@ -148,19 +156,19 @@ export const PromoterPitchModal: React.FC<PromoterPitchModalProps> = ({
           </pre>
         </div>
 
-        {/* Footer with copy button */}
+        {/* Modal Footer */}
         <div
           style={{
-            padding: '12px 20px',
-            borderTop: '1px solid #21262d',
+            padding: '14px 24px',
+            borderTop: '1px solid var(--rule)',
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            backgroundColor: '#0d1117',
+            backgroundColor: 'var(--paper-2)',
           }}
         >
-          <span style={{ fontSize: '11.5px', color: '#6e7681' }}>
-            Cites local Qloo affinity metrics, opener synergies, and ticket estimates
+          <span style={{ fontSize: '11.5px', color: 'var(--ink-3)' }}>
+            Grounded in local Qloo subgenre taste graph analytics &amp; opener synergies
           </span>
 
           <button
@@ -168,8 +176,8 @@ export const PromoterPitchModal: React.FC<PromoterPitchModalProps> = ({
             className="btn-primary"
             id="btn-copy-pitch-email"
             style={{
-              fontSize: '12.5px',
-              padding: '6px 14px',
+              fontSize: '13px',
+              padding: '8px 16px',
             }}
           >
             {copied ? (

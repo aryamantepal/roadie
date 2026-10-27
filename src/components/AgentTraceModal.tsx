@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { AgentTraceStep } from '@/types';
-import { Terminal, CheckCircle2, Clock, X } from 'lucide-react';
+import { CheckCircle2, Clock, X } from 'lucide-react';
 
 interface AgentTraceModalProps {
   trace: AgentTraceStep[];
@@ -22,27 +22,27 @@ export const AgentTraceModal: React.FC<AgentTraceModalProps> = ({
       style={{
         position: 'fixed',
         inset: 0,
-        backgroundColor: 'rgba(0, 0, 0, 0.75)',
+        backgroundColor: 'oklch(24% 0.030 260 / 0.45)',
+        backdropFilter: 'blur(8px)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         zIndex: 9999,
-        padding: '20px',
+        padding: '24px',
       }}
       onClick={onClose}
     >
       <div
-        className="glass-panel"
         style={{
           width: '100%',
-          maxWidth: '720px',
-          maxHeight: '85vh',
+          maxWidth: '740px',
+          maxHeight: '88vh',
           display: 'flex',
           flexDirection: 'column',
-          backgroundColor: '#161b22',
-          border: '1px solid #30363d',
-          borderRadius: '8px',
-          boxShadow: '0 10px 30px rgba(0, 0, 0, 0.6)',
+          backgroundColor: 'var(--paper)',
+          border: '1px solid var(--rule)',
+          borderRadius: 'var(--r-card)',
+          boxShadow: '0 24px 60px -24px oklch(24% 0.030 260 / 0.35)',
           overflow: 'hidden',
         }}
         onClick={(e) => e.stopPropagation()}
@@ -51,96 +51,86 @@ export const AgentTraceModal: React.FC<AgentTraceModalProps> = ({
         {/* Header */}
         <div
           style={{
-            padding: '14px 20px',
-            borderBottom: '1px solid #21262d',
+            padding: '18px 24px',
+            borderBottom: '1px solid var(--rule)',
             display: 'flex',
             justifyContent: 'space-between',
-            alignItems: 'center',
-            backgroundColor: '#0d1117',
+            alignItems: 'baseline',
+            backgroundColor: 'var(--paper)',
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Terminal size={16} color="#38bdf8" />
-            <div>
-              <h3 style={{ fontSize: '14px', fontWeight: 600, color: '#f0f6fc', margin: 0 }}>
-                Agent Tool Execution Trace
-              </h3>
-              <p style={{ fontSize: '11.5px', color: '#8b949e', margin: 0 }}>
-                5 thin tools with internal precondition verification
-              </p>
-            </div>
+          <div>
+            <span className="ov" style={{ marginBottom: '2px' }}>Solver Audit Trail</span>
+            <h3 style={{ fontSize: '18px', fontWeight: 500, color: 'var(--ink)', margin: 0 }}>
+              Tour Logistics &amp; Pipeline Audit Log
+            </h3>
+            <p style={{ fontSize: '12.5px', color: 'var(--ink-3)', margin: 0, marginTop: '2px' }}>
+              5 verified solver stages with physical touring circuit breakers
+            </p>
           </div>
 
           <button
             onClick={onClose}
             id="btn-close-trace-modal"
             style={{
-              background: 'transparent',
-              color: '#8b949e',
-              padding: '4px',
-              borderRadius: '4px',
+              background: 'var(--paper-2)',
+              border: '1px solid var(--rule)',
+              color: 'var(--ink-2)',
+              padding: '6px',
+              borderRadius: 'var(--r-control)',
+              cursor: 'pointer',
             }}
           >
-            <X size={18} />
+            <X size={15} />
           </button>
         </div>
 
-        {/* Trace List */}
+        {/* Audit Step List */}
         <div
           style={{
-            padding: '16px 20px',
+            padding: '20px 24px',
             overflowY: 'auto',
             flex: 1,
             display: 'flex',
             flexDirection: 'column',
-            gap: '10px',
+            gap: '12px',
+            backgroundColor: 'var(--paper)',
           }}
         >
           {trace.map((step, idx) => (
             <div
               key={idx}
               style={{
-                backgroundColor: '#0d1117',
-                border: '1px solid #21262d',
-                borderRadius: '6px',
-                padding: '12px 14px',
+                backgroundColor: 'var(--paper-2)',
+                border: '1px solid var(--rule)',
+                borderRadius: 'var(--r-control)',
+                padding: '14px 18px',
               }}
             >
               <div
                 style={{
                   display: 'flex',
                   justifyContent: 'space-between',
-                  alignItems: 'center',
+                  alignItems: 'baseline',
                   marginBottom: '6px',
                 }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <span
-                    style={{
-                      fontFamily: 'ui-monospace, monospace',
-                      fontSize: '11px',
-                      fontWeight: 600,
-                      color: '#58a6ff',
-                      background: 'rgba(56, 139, 253, 0.1)',
-                      border: '1px solid rgba(56, 139, 253, 0.25)',
-                      padding: '2px 6px',
-                      borderRadius: '4px',
-                    }}
-                  >
-                    tool:{step.tool}
+                  <span className="chip live">
+                    Stage {idx + 1}: {step.tool}
                   </span>
                   <div
                     style={{
                       display: 'flex',
                       alignItems: 'center',
                       gap: '4px',
-                      color: '#3fb950',
-                      fontSize: '11px',
-                      fontWeight: 600,
+                      color: 'var(--emerald)',
+                      fontSize: '11.5px',
+                      fontWeight: 500,
                     }}
                   >
                     <CheckCircle2 size={12} />
-                    <span>Preconditions Verified</span>
+                    <span>Constraints Verified</span>
                   </div>
                 </div>
 
@@ -149,33 +139,34 @@ export const AgentTraceModal: React.FC<AgentTraceModalProps> = ({
                     display: 'flex',
                     alignItems: 'center',
                     gap: '4px',
-                    fontSize: '11px',
-                    color: '#6e7681',
-                    fontFamily: 'ui-monospace, monospace',
+                    fontSize: '11.5px',
+                    color: 'var(--ink-3)',
                   }}
+                  className="num"
                 >
                   <Clock size={11} />
                   <span>{step.durationMs}ms</span>
                 </div>
               </div>
 
-              <p style={{ fontSize: '12.5px', color: '#c9d1d9', lineHeight: 1.5, margin: 0 }}>
+              <p style={{ fontSize: '13px', color: 'var(--ink)', lineHeight: 1.5, margin: 0 }}>
                 {step.outputSummary}
               </p>
 
               <div
                 style={{
                   marginTop: '8px',
-                  fontFamily: 'ui-monospace, monospace',
-                  fontSize: '11px',
-                  color: '#8b949e',
-                  background: '#161b22',
-                  border: '1px solid #21262d',
-                  padding: '6px 8px',
-                  borderRadius: '4px',
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: '11.5px',
+                  color: 'var(--ink-3)',
+                  background: 'var(--paper)',
+                  border: '1px solid var(--rule)',
+                  padding: '6px 10px',
+                  borderRadius: 'var(--r-control)',
+                  overflowX: 'auto',
                 }}
               >
-                input: {JSON.stringify(step.input)}
+                parameters: {JSON.stringify(step.input)}
               </div>
             </div>
           ))}

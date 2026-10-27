@@ -68,7 +68,7 @@ export const GROUND_TRUTH_BACKTEST_CASES: BacktestCase[] = [
       wastedTravelMiles: 0,
     },
     analysis:
-      'The LLM-only agent defaulted to raw population rankings (Houston, Phoenix, San Antonio, Miami). An indie art-punk act routing to Miami or San Antonio faces half-empty rooms and thousands of wasted highway miles. Roadie (powered by Qloo) identified Asheville (pop. ~94,000) and East Atlanta as premier affinity strongholds, matching the actual sold-out tour with 100% precision.',
+      'The ungrounded baseline model defaulted to raw population rankings (Houston, Phoenix, San Antonio, Miami). An indie art-punk act routing to Miami or San Antonio faces half-empty rooms and thousands of wasted highway miles. Roadie (powered by Qloo) identified Asheville (pop. ~94,000) and East Atlanta as premier affinity strongholds, matching the actual sold-out tour with 100% precision.',
     whyQlooWins: [
       'Discovered Asheville, NC (Rank #4) despite population under 100k, because subcultural taste concentration is 1.76x national avg.',
       'Filtered out Houston, Phoenix, and Miami which have massive populations but near-zero organic audience affinity for art-punk.',
