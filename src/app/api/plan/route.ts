@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { roadieAgent } from '@/lib/agent/runner';
 import { ArtistInput } from '@/types';
 
+export const maxDuration = 60;
+export const dynamic = 'force-dynamic';
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
