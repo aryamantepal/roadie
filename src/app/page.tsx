@@ -10,10 +10,7 @@ import { AgentTraceModal } from '@/components/AgentTraceModal';
 import { ReceiptsView } from '@/components/ReceiptsView';
 import { ArchitectureView } from '@/components/ArchitectureView';
 import { ArtistInput, TourPlan, TourStop } from '@/types';
-import {
-  Activity,
-  Terminal,
-} from 'lucide-react';
+import { FileCheck2 } from 'lucide-react';
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState<ActiveTab>('planner');
@@ -77,195 +74,185 @@ export default function Home() {
   }, []);
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', backgroundColor: '#090d13' }}>
+    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', backgroundColor: 'var(--paper)' }}>
       <Header activeTab={activeTab} setActiveTab={setActiveTab} />
 
       <main
         style={{
-          maxWidth: '1380px',
+          maxWidth: '1400px',
           margin: '0 auto',
-          padding: '24px 24px 60px',
+          padding: '32px 28px 80px',
           width: '100%',
           flex: 1,
         }}
       >
         {activeTab === 'planner' && (
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'minmax(340px, 400px) 1fr',
-              gap: '24px',
-              alignItems: 'start',
-            }}
-          >
-            {/* Left Column: Input Form & Tour Metrics */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              <TourForm isLoading={isLoading} onPlanTour={handlePlanTour} />
-
-              {/* Tour Plan Metrics Summary Card */}
-              {tourPlan && (
-                <div
-                  className="glass-panel"
-                  id="tour-metrics-summary-card"
-                  style={{
-                    padding: '18px 20px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '14px',
-                    backgroundColor: '#161b22',
-                    border: '1px solid #30363d',
-                    borderRadius: '8px',
-                  }}
-                >
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <Activity size={16} color="#38bdf8" />
-                      <h3 style={{ fontSize: '14px', fontWeight: 600, color: '#f0f6fc', margin: 0 }}>
-                        Route Optimization Metrics
-                      </h3>
-                    </div>
-                    <span
-                      style={{
-                        fontFamily: 'ui-monospace, monospace',
-                        fontSize: '11px',
-                        fontWeight: 600,
-                        color: '#34d399',
-                        background: 'rgba(52, 211, 153, 0.1)',
-                        padding: '2px 8px',
-                        borderRadius: '4px',
-                        border: '1px solid rgba(52, 211, 153, 0.25)',
-                      }}
-                    >
-                      {tourPlan.efficiencyScore}% Efficiency
-                    </span>
-                  </div>
-
-                  <div
-                    style={{
-                      display: 'grid',
-                      gridTemplateColumns: '1fr 1fr',
-                      gap: '10px',
-                    }}
-                  >
-                    <div
-                      style={{
-                        background: '#0d1117',
-                        borderRadius: '6px',
-                        padding: '10px 12px',
-                        border: '1px solid #212836',
-                      }}
-                    >
-                      <div style={{ fontSize: '10.5px', fontFamily: 'ui-monospace, monospace', color: '#8b949e' }}>
-                        TOTAL DISTANCE
-                      </div>
-                      <div style={{ fontSize: '18px', fontWeight: 700, fontFamily: 'ui-monospace, monospace', color: '#f0f6fc', marginTop: '2px' }}>
-                        {tourPlan.totalDistanceMiles.toLocaleString()} mi
-                      </div>
-                      <div style={{ fontSize: '11px', color: '#38bdf8', marginTop: '2px' }}>
-                        Drivable corridor
-                      </div>
-                    </div>
-
-                    <div
-                      style={{
-                        background: '#0d1117',
-                        borderRadius: '6px',
-                        padding: '10px 12px',
-                        border: '1px solid #212836',
-                      }}
-                    >
-                      <div style={{ fontSize: '10.5px', fontFamily: 'ui-monospace, monospace', color: '#8b949e' }}>
-                        SHOW / REST DAYS
-                      </div>
-                      <div style={{ fontSize: '18px', fontWeight: 700, fontFamily: 'ui-monospace, monospace', color: '#f0f6fc', marginTop: '2px' }}>
-                        {tourPlan.totalShows} shows • {tourPlan.totalOffDays} rest
-                      </div>
-                      <div style={{ fontSize: '11px', color: '#fbbf24', marginTop: '2px' }}>
-                        Burnout protected
-                      </div>
-                    </div>
-
-                    <div
-                      style={{
-                        background: '#0d1117',
-                        borderRadius: '6px',
-                        padding: '10px 12px',
-                        border: '1px solid #212836',
-                        gridColumn: 'span 2',
-                      }}
-                    >
-                      <div style={{ fontSize: '10.5px', fontFamily: 'ui-monospace, monospace', color: '#8b949e' }}>
-                        AVERAGE CULTURAL AFFINITY (QLOO TASTE GRAPH)
-                      </div>
-                      <div style={{ fontSize: '18px', fontWeight: 700, fontFamily: 'ui-monospace, monospace', color: '#34d399', marginTop: '2px' }}>
-                        {tourPlan.culturalIndexAvg}x national baseline
-                      </div>
-                      <div style={{ fontSize: '11px', color: '#8b949e', marginTop: '2px' }}>
-                        Normalized subgenre audience density across booked markets
-                      </div>
-                    </div>
-                  </div>
-
-                  <button
-                    onClick={() => setIsTraceModalOpen(true)}
-                    className="btn-secondary"
-                    id="btn-inspect-agent-trace"
-                    style={{
-                      width: '100%',
-                      justifyContent: 'center',
-                      fontSize: '12.5px',
-                      padding: '8px',
-                    }}
-                  >
-                    <Terminal size={13} color="#38bdf8" />
-                    <span>Inspect Agent Execution Trace ({tourPlan.executionTrace.length} tools)</span>
-                  </button>
-                </div>
-              )}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+            {/* Editorial Lead-In: Elixir ERP style */}
+            <div style={{ borderBottom: '1px solid var(--rule)', paddingBottom: '24px' }}>
+              <span className="ov">Tour Routing &amp; Booking Intelligence</span>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '16px' }}>
+                <h2 style={{ fontSize: 'clamp(26px, 2.8vw, 36px)', fontWeight: 400, color: 'var(--ink)', maxWidth: '28ch', lineHeight: 1.15 }}>
+                  Independent tour routing grounded in cultural graph density.
+                </h2>
+                <p style={{ fontSize: '15px', color: 'var(--ink-2)', maxWidth: '42ch', lineHeight: 1.5, margin: 0 }}>
+                  Computes 2-opt deterministic van circuits, checks driver fatigue thresholds, and pairs matched local support from Qloo taste graphs.
+                </p>
+              </div>
             </div>
 
-            {/* Right Column: Tour Map & Stop Cards */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-              {tourPlan && (
-                <>
-                  <TourMap
-                    stops={tourPlan.stops}
-                    selectedStopIndex={selectedStopIndex}
-                    onSelectStop={(idx) => setSelectedStopIndex(idx)}
-                  />
+            {/* Main Workbench Grid */}
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: 'minmax(340px, 400px) 1fr',
+                gap: '28px',
+                alignItems: 'start',
+              }}
+            >
+              {/* Left Column: Form & Tour Logistics Ledger */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                <TourForm isLoading={isLoading} onPlanTour={handlePlanTour} />
 
-                  {/* Stop Cards List */}
-                  <div>
-                    <div
-                      style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        marginBottom: '12px',
-                      }}
-                    >
-                      <h3 style={{ fontSize: '15px', fontWeight: 600, color: '#f0f6fc', margin: 0 }}>
-                        Itinerary &amp; Venue Routing ({tourPlan.stops.length} dates)
-                      </h3>
-                      <span style={{ fontSize: '12px', color: '#8b949e' }}>
-                        Click stop to highlight on map
+                {/* Tour Logistics Paper Ledger */}
+                {tourPlan && (
+                  <div
+                    className="card-paper"
+                    id="tour-metrics-summary-card"
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '16px',
+                      background: 'var(--paper)',
+                    }}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', borderBottom: '1px solid var(--rule)', paddingBottom: '12px' }}>
+                      <div>
+                        <span className="ov" style={{ marginBottom: '2px' }}>Route Efficiency</span>
+                        <h3 style={{ fontSize: '16px', fontWeight: 500, color: 'var(--ink)' }}>
+                          Tour Logistics Ledger
+                        </h3>
+                      </div>
+                      <span className="chip emerald num">
+                        {tourPlan.efficiencyScore}% Optimal Corridor
                       </span>
                     </div>
 
-                    <div style={{ display: 'flex', flexDirection: 'column' }}>
-                      {tourPlan.stops.map((stop, idx) => (
-                        <StopCard
-                          key={stop.stopNumber}
-                          stop={stop}
-                          isSelected={selectedStopIndex === idx}
-                          onSelect={() => setSelectedStopIndex(idx)}
-                          onOpenPitchModal={(s) => setPitchModalStop(s)}
-                        />
-                      ))}
+                    <div
+                      style={{
+                        display: 'grid',
+                        gridTemplateColumns: '1fr 1fr',
+                        gap: '10px',
+                      }}
+                    >
+                      {/* Mileage & Van Drive Times */}
+                      <div className="metric-tile">
+                        <div style={{ fontSize: '11px', color: 'var(--ink-3)', fontWeight: 600 }}>
+                          TOTAL MILEAGE
+                        </div>
+                        <div className="num" style={{ fontSize: '20px', fontWeight: 500, color: 'var(--ink)', marginTop: '2px' }}>
+                          {tourPlan.totalDistanceMiles.toLocaleString()} mi
+                        </div>
+                        <div style={{ fontSize: '11.5px', color: 'var(--signal)', marginTop: '2px' }}>
+                          ~{Math.round(tourPlan.totalDistanceMiles / 50)}h van drive time
+                        </div>
+                      </div>
+
+                      {/* Show / Rest Ratio */}
+                      <div className="metric-tile">
+                        <div style={{ fontSize: '11px', color: 'var(--ink-3)', fontWeight: 600 }}>
+                          SHOW / REST DAYS
+                        </div>
+                        <div className="num" style={{ fontSize: '20px', fontWeight: 500, color: 'var(--ink)', marginTop: '2px' }}>
+                          {tourPlan.totalShows} Gigs • {tourPlan.totalOffDays} Rest
+                        </div>
+                        <div style={{ fontSize: '11.5px', color: 'var(--vermilion)', marginTop: '2px' }}>
+                          Burnout compliant
+                        </div>
+                      </div>
+
+                      {/* Qloo Subgenre Index */}
+                      <div className="metric-tile" style={{ gridColumn: 'span 2' }}>
+                        <div style={{ fontSize: '11px', color: 'var(--ink-3)', fontWeight: 600 }}>
+                          QLOO SUBGENRE AFFINITY INDEX
+                        </div>
+                        <div className="num" style={{ fontSize: '20px', fontWeight: 500, color: 'var(--emerald)', marginTop: '2px' }}>
+                          {tourPlan.culturalIndexAvg}x national baseline
+                        </div>
+                        <div style={{ fontSize: '12px', color: 'var(--ink-2)', marginTop: '2px' }}>
+                          Normalized subgenre concentration across booked indie markets
+                        </div>
+                      </div>
                     </div>
+
+                    {/* Logistics Audit Log Action */}
+                    <button
+                      onClick={() => setIsTraceModalOpen(true)}
+                      className="btn-secondary"
+                      id="btn-inspect-agent-trace"
+                      style={{
+                        width: '100%',
+                        justifyContent: 'center',
+                        fontSize: '12.5px',
+                        padding: '9px',
+                      }}
+                    >
+                      <FileCheck2 size={13} />
+                      <span>Logistics Audit Log ({tourPlan.executionTrace.length} Solver Stages)</span>
+                    </button>
                   </div>
-                </>
-              )}
+                )}
+              </div>
+
+              {/* Right Column: Cartographic Parchment Map & Physical Day-Sheets */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                {tourPlan && (
+                  <>
+                    <TourMap
+                      stops={tourPlan.stops}
+                      selectedStopIndex={selectedStopIndex}
+                      onSelectStop={(idx) => setSelectedStopIndex(idx)}
+                    />
+
+                    {/* Day-Sheets Header */}
+                    <div>
+                      <div
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'baseline',
+                          borderBottom: '1px solid var(--rule)',
+                          paddingBottom: '12px',
+                          marginBottom: '16px',
+                        }}
+                      >
+                        <div>
+                          <span className="ov" style={{ marginBottom: '2px' }}>Itinerary Schedule</span>
+                          <h3 style={{ fontSize: '18px', fontWeight: 500, color: 'var(--ink)' }}>
+                            Tour Day-Sheets &amp; Venue Routing ({tourPlan.stops.length} dates)
+                          </h3>
+                        </div>
+                        <span style={{ fontSize: '12.5px', color: 'var(--ink-3)' }}>
+                          Click stop to center on map
+                        </span>
+                      </div>
+
+                      {/* Day-Sheet Stop Cards */}
+                      <div style={{ display: 'flex', flexDirection: 'column' }}>
+                        {tourPlan.stops.map((stop, idx) => (
+                          <StopCard
+                            key={stop.stopNumber}
+                            stop={stop}
+                            isSelected={selectedStopIndex === idx}
+                            onSelect={() => setSelectedStopIndex(idx)}
+                            onOpenPitchModal={(s) => setPitchModalStop(s)}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
             </div>
           </div>
         )}
@@ -275,14 +262,14 @@ export default function Home() {
         {activeTab === 'architecture' && <ArchitectureView />}
       </main>
 
-      {/* Promoter Pitch Modal */}
+      {/* Promoter Data Brief Modal */}
       <PromoterPitchModal
         stop={pitchModalStop}
         artistName={tourPlan?.artistName || 'Artist'}
         onClose={() => setPitchModalStop(null)}
       />
 
-      {/* Agent Trace Modal */}
+      {/* Logistics & Precondition Audit Modal */}
       <AgentTraceModal
         trace={tourPlan?.executionTrace || []}
         isOpen={isTraceModalOpen}

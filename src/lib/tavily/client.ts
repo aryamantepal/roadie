@@ -56,6 +56,24 @@ class TavilyIntegrationClient {
     };
   }
 
+  private async safeSearch(
+    query: string,
+    options: { searchDepth?: 'basic' | 'advanced'; maxResults?: number }
+  ) {
+    const client = this.ensureClient();
+    if (!client || !this.isConfigured) return null;
+
+    try {
+      const searchPromise = client.search(query, options);
+      const timeoutPromise = new Promise<null>((_, reject) =>
+        setTimeout(() => reject(new Error('Tavily search timeout')), 3000)
+      );
+      return await Promise.race([searchPromise, timeoutPromise]);
+    } catch {
+      return null;
+    }
+  }
+
   /**
    * Search live web for venue booking contact / talent buyer email
    */
@@ -63,17 +81,14 @@ class TavilyIntegrationClient {
     venueName: string,
     city: string
   ): Promise<VenueBookingEnrichment | null> {
-    const client = this.ensureClient();
-    if (!client || !this.isConfigured) return null;
-
     try {
       const query = `"${venueName}" "${city}" booking talent buyer email contact`;
-      const response = await client.search(query, {
+      const response = await this.safeSearch(query, {
         searchDepth: 'basic',
         maxResults: 3,
       });
 
-      if (!response.results || response.results.length === 0) return null;
+      if (!response || !response.results || response.results.length === 0) return null;
 
       // Extract email patterns from snippets
       const emailRegex = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/;
@@ -112,17 +127,14 @@ class TavilyIntegrationClient {
     openerName: string,
     city: string
   ): Promise<OpenerVerificationResult | null> {
-    const client = this.ensureClient();
-    if (!client || !this.isConfigured) return null;
-
     try {
       const query = `"${openerName}" band music live shows concerts "${city}" 2025 OR 2026`;
-      const response = await client.search(query, {
+      const response = await this.safeSearch(query, {
         searchDepth: 'basic',
         maxResults: 2,
       });
 
-      if (response.results && response.results.length > 0) {
+      if (response && response.results && response.results.length > 0) {
         const first = response.results[0];
         return {
           isActive: true,
@@ -148,8 +160,7 @@ class TavilyIntegrationClient {
     city: string,
     dateStr: string
   ): Promise<MarketConflictResult | null> {
-    const client = this.ensureClient();
-    if (!client || !this.isConfigured) {
+    if (!this.isConfigured) {
       return {
         hasConflict: false,
         conflictSummary: 'Curated calendar: No major conflicting festival flags.',
@@ -158,12 +169,12 @@ class TavilyIntegrationClient {
 
     try {
       const query = `music festival major concerts "${city}" "${dateStr}"`;
-      const response = await client.search(query, {
+      const response = await this.safeSearch(query, {
         searchDepth: 'basic',
         maxResults: 2,
       });
 
-      if (response.results && response.results.length > 0) {
+      if (response && response.results && response.results.length > 0) {
         const topResult = response.results[0];
         const content = topResult.content.toLowerCase();
         const conflictKeywords = ['festival', 'sold out arena', 'stadium tour', 'major festival'];

@@ -482,7 +482,7 @@ export class QlooClient {
 
   constructor(config: QlooConfig = {}) {
     this.apiKey = config.apiKey || process.env.QLOO_API_KEY || null;
-    this.baseUrl = config.baseUrl || process.env.QLOO_BASE_URL || 'https://api.qloo.com/v1';
+    this.baseUrl = (config.baseUrl || process.env.QLOO_BASE_URL || 'https://hackathon.api.qloo.com').replace(/\/+$/, '');
     this.timeoutMs = config.timeoutMs || 8000;
   }
 
@@ -518,10 +518,11 @@ export class QlooClient {
       const controller = new AbortController();
       const timer = setTimeout(() => controller.abort(), this.timeoutMs);
 
-      const res = await fetch(`${this.baseUrl}/entities?query=radiohead&category=music`, {
+      const targetEndpoint = `${this.baseUrl}/search?query=radiohead&types=urn:entity:artist`;
+      const res = await fetch(targetEndpoint, {
         method: 'GET',
         headers: {
-          'x-api-key': this.apiKey!,
+          'X-Api-Key': this.apiKey!,
           'Accept': 'application/json',
         },
         signal: controller.signal,
@@ -535,8 +536,10 @@ export class QlooClient {
         connected: res.ok,
         status: res.status,
         latencyMs,
-        endpoint: `${this.baseUrl}/entities`,
-        message: res.ok ? 'Successfully connected to Qloo Taste Graph API' : `Qloo API responded with HTTP ${res.status}`,
+        endpoint: `${this.baseUrl}/search`,
+        message: res.ok
+          ? 'Successfully connected to Qloo Taste Graph API (Hackathon Live)'
+          : `Qloo API responded with HTTP ${res.status}`,
       };
     } catch (err: unknown) {
       const errorMsg = err instanceof Error ? err.message : String(err);
@@ -544,7 +547,7 @@ export class QlooClient {
         configured: true,
         connected: false,
         latencyMs: Date.now() - start,
-        endpoint: `${this.baseUrl}/entities`,
+        endpoint: `${this.baseUrl}/search`,
         message: `Connection attempt failed: ${errorMsg}`,
       };
     }
@@ -558,31 +561,88 @@ export class QlooClient {
   public async getAudienceAffinity(artistName: string): Promise<AffinityMarket[]> {
     const normalized = artistName.trim().toLowerCase();
 
-    // 1. If live credentials exist, hit the Qloo API endpoint
+    // 1. If live credentials exist, hit the Qloo Hackathon API endpoints (/search & /v2/insights)
     if (this.hasLiveCredentials()) {
       try {
         const controller = new AbortController();
         const timer = setTimeout(() => controller.abort(), this.timeoutMs);
 
-        // Call Qloo insights location endpoint
-        const response = await fetch(
-          `${this.baseUrl}/insights/location?query=${encodeURIComponent(artistName)}&category=music`,
+        // Step 1: Look up entity ID via /search
+        const searchResponse = await fetch(
+          `${this.baseUrl}/search?query=${encodeURIComponent(artistName)}&types=urn:entity:artist`,
           {
             method: 'GET',
             headers: {
-              'x-api-key': this.apiKey!,
+              'X-Api-Key': this.apiKey!,
               'Accept': 'application/json',
             },
             signal: controller.signal,
           }
         );
-        clearTimeout(timer);
 
-        if (response.ok) {
-          const data = await response.json();
-          if (Array.isArray(data?.results) && data.results.length > 0) {
-            return this.transformQlooLocationResults(data.results, artistName);
+        if (searchResponse.ok) {
+          const searchData = await searchResponse.json();
+          const results = Array.isArray(searchData?.results) ? searchData.results : [];
+          const matchedEntity = results[0];
+          const entityId = (matchedEntity?.id || matchedEntity?.entity_id) as string | undefined;
+
+          let liveSimilarArtists: string[] = [];
+
+          if (entityId) {
+            // Step 2: Query /v2/insights for correlated taste graph entities
+            const insightsResponse = await fetch(
+              `${this.baseUrl}/v2/insights?filter.type=urn:entity:artist&signal.interests.entities=${encodeURIComponent(entityId)}`,
+              {
+                method: 'GET',
+                headers: {
+                  'X-Api-Key': this.apiKey!,
+                  'Accept': 'application/json',
+                },
+                signal: controller.signal,
+              }
+            );
+
+            if (insightsResponse.ok) {
+              const insightsData = await insightsResponse.json();
+              const entities = Array.isArray(insightsData?.entities)
+                ? insightsData.entities
+                : Array.isArray(insightsData?.results)
+                ? insightsData.results
+                : [];
+
+              liveSimilarArtists = entities
+                .slice(0, 4)
+                .map((e: Record<string, unknown>) => String(e.name || e.title || ''))
+                .filter(Boolean);
+            }
           }
+          clearTimeout(timer);
+
+          // Find baseline markets from curated database or heuristic
+          let baseMarkets: AffinityMarket[] = [];
+          for (const [key, value] of Object.entries(CURATED_QLOO_DATABASE)) {
+            if (normalized.includes(key) || key.includes(normalized)) {
+              baseMarkets = value.markets;
+              break;
+            }
+          }
+          if (baseMarkets.length === 0) {
+            baseMarkets = this.generateDerivedTasteMarkets(artistName);
+          }
+
+          // Enrich base markets with live Qloo entity peer insights
+          if (liveSimilarArtists.length > 0) {
+            return baseMarkets.map((m) => ({
+              ...m,
+              similarArtistsLocally: [
+                ...liveSimilarArtists.slice(0, 2),
+                ...m.similarArtistsLocally.slice(0, 1),
+              ],
+              tasteArchetype: `${artistName} × ${liveSimilarArtists[0]} Affinity Axis`,
+            }));
+          }
+
+          return baseMarkets;
         }
       } catch (err) {
         console.warn('[QlooClient] Live API request failed, falling back to curated taste graph:', err);
