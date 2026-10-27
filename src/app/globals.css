@@ -315,3 +315,39 @@ input, select, textarea {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--ink-3);
 }
+
+/* Mermaid Diagram Polish */
+.mermaid-svg-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow-x: auto;
+}
+
+.mermaid-svg-container svg {
+  max-width: 100% !important;
+  height: auto !important;
+  font-family: var(--font-sans), "Instrument Sans", -apple-system, sans-serif !important;
+}
+
+.mermaid-svg-container .node rect,
+.mermaid-svg-container .node circle,
+.mermaid-svg-container .node ellipse,
+.mermaid-svg-container .node polygon {
+  filter: drop-shadow(0 1px 3px oklch(24% 0.030 260 / 0.07));
+  transition: all 200ms var(--ease-out);
+}
+
+.mermaid-svg-container .node:hover rect,
+.mermaid-svg-container .node:hover circle,
+.mermaid-svg-container .node:hover ellipse {
+  filter: drop-shadow(0 4px 10px oklch(24% 0.030 260 / 0.14));
+}
+
+.mermaid-svg-container .cluster rect {
+  rx: 14px !important;
+  ry: 14px !important;
+  stroke-dasharray: 4 4;
+}
+

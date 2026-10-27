@@ -1,59 +1,96 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { MermaidDiagram } from './MermaidDiagram';
-import { CheckCircle2 } from 'lucide-react';
+import { CheckCircle2, Orbit, GitCommit } from 'lucide-react';
 
-const AGENT_MERMAID_CHART = `flowchart TD
-    classDef inputStyle fill:#f4f0e6,stroke:#1b2333,stroke-width:1px,color:#1b2333;
-    classDef agentStyle fill:#1d4ed8,stroke:#1d4ed8,stroke-width:1px,color:#ffffff;
-    classDef toolStyle fill:#fbfaf7,stroke:#1d4ed8,stroke-width:1px,color:#1b2333;
-    classDef guardStyle fill:#fff7ed,stroke:#ea580c,stroke-width:1px,color:#9a3412;
-    classDef outStyle fill:#f0fdf4,stroke:#16a34a,stroke-width:1px,color:#14532d;
+const ROUND_AGENT_MERMAID_CHART = `flowchart TD
+    classDef agentStyle fill:#1d4ed8,stroke:#172554,stroke-width:2.5px,color:#ffffff;
+    classDef toolStyle fill:#ffffff,stroke:#2563eb,stroke-width:2px,color:#1b2333;
+    classDef inputStyle fill:#ffffff,stroke:#64748b,stroke-width:1.5px,color:#0f172a;
+    classDef guardStyle fill:#fffbeb,stroke:#d97706,stroke-width:1.5px,color:#92400e;
+    classDef outStyle fill:#f0fdf4,stroke:#16a34a,stroke-width:2px,color:#14532d;
 
-    subgraph Step1 ["1. Input Parameters & Constraints"]
+    subgraph Config ["1. Input Constraints"]
         direction LR
-        A["Artist & Genre Profile<br/>(e.g. Geese • Post-Punk)"]:::inputStyle
-        B["Date Window & Target Corridor<br/>(e.g. US-East, Nov 6–20)"]:::inputStyle
-        C["Room Size Tier<br/>(Club: 200–450 cap)"]:::inputStyle
+        In1(["<b>Artist & Subgenre Profile</b><br/>e.g. Geese • Post-Punk"]):::inputStyle
+        In2(["<b>Target Corridor & Dates</b><br/>e.g. US-East • Nov 6–20"]):::inputStyle
+        In3(["<b>Capacity Tier</b><br/>Club: 200–450 cap"]):::inputStyle
     end
 
-    subgraph Step2 ["2. Deterministic Agent Core"]
-        Orch["Tour Routing Orchestrator<br/>State Machine & Precondition Validator"]:::agentStyle
+    subgraph Orbit ["2. Deterministic Agent Core & Orbital Tool Ring"]
+        direction TB
+
+        T1(["<b>01 · audience_affinity</b><br/>Qloo 250M+ Entity Taste Graph<br/><i>Subgenre market affinity scoring</i>"]):::toolStyle
+        T2(["<b>02 · find_venues</b><br/>Ticketmaster &amp; Tavily Live Web<br/><i>Capacity verification &amp; contacts</i>"]):::toolStyle
+
+        Agent((("<b>ROADIE ORCHESTRATOR</b><br/>Deterministic ReAct Loop<br/>State Machine &amp; Guardrails"))):::agentStyle
+
+        T5(["<b>05 · draft_pitch</b><br/>Promoter Pitch Brief Engine<br/><i>Talent-buyer data synthesis</i>"]):::toolStyle
+        T3(["<b>03 · local_taste</b><br/>Qloo Taste Graph &amp; Live Search<br/><i>Local opener co-affinity matching</i>"]):::toolStyle
+        T4(["<b>04 · build_route</b><br/>Deterministic 2-Opt TSP Routing<br/><i>Corridor mileage &amp; rest cadence</i>"]):::toolStyle
+
+        %% Round Orbital Cycle between tools
+        T1 ==>|1. Taste Shortlist| T2
+        T2 ==>|2. Room Holds| T3
+        T3 ==>|3. Co-Bill Matches| T4
+        T4 ==>|4. Drivable Sequence| T5
+        T5 -.->|5. Next Leg Iteration| T1
+
+        %% Central Agent Core Dispatch & Validation
+        Agent <--->|Dispatch &amp; Validate| T1
+        Agent <--->|Precondition Check| T2
+        Agent <--->|Opener Validation| T3
+        Agent <--->|Transit Constraints| T4
+        Agent <--->|Pitch Compilation| T5
     end
 
-    subgraph Step3 ["3. Deterministic Tool Pipeline (In-Tool Preconditions)"]
+    subgraph Guards ["3. Physical Touring Circuit Breakers"]
         direction LR
-        T1["Tool 1: audience_affinity<br/><b>Qloo API:</b> 250M+ Entity Taste Graph<br/>Ranks markets by affinity ratio"]:::toolStyle
-        T2["Tool 2: find_venues<br/><b>Ticketmaster & Tavily Live Web:</b><br/>Filters rooms & extracts booking emails"]:::toolStyle
-        T3["Tool 3: local_taste<br/><b>Qloo Graph & Tavily Verification:</b><br/>Pairs active openers & culture pop-ups"]:::toolStyle
-        T4["Tool 4: build_route<br/><b>Deterministic TSP (2-Opt Algorithm):</b><br/>Calculates drivable mileage & rest cadence"]:::toolStyle
-        T5["Tool 5: draft_pitch<br/><b>Promoter Pitch Engine:</b><br/>Embeds talent-buyer emails & affinity data"]:::toolStyle
-        
+        G1(["<b>Daily Transit Cap</b><br/>Max 320 mi / 5.5h drive"]):::guardStyle
+        G2(["<b>Rest Day Cadence</b><br/>1 rest day per 3 shows"]):::guardStyle
+        G3(["<b>Radius Clause</b><br/>Min 45 mi market spacing"]):::guardStyle
+    end
+
+    subgraph Deliverables ["4. Verified Tour Deliverables"]
+        direction LR
+        O1(["<b>Master Tour Day-Sheets</b><br/>Daily schedules &amp; load-in"]):::outStyle
+        O2(["<b>Cartographic Route Map</b><br/>Interactive SVG highway path"]):::outStyle
+        O3(["<b>Promoter Pitch Briefs</b><br/>Qloo-backed talent inquiries"]):::outStyle
+    end
+
+    Config ==>|1. Tour Parameters| Agent
+    Agent -. Enforces Physical Boundaries .-> Guards
+    Agent ==>|2. Verified Plan| Deliverables
+`;
+
+const PIPELINE_MERMAID_CHART = `flowchart LR
+    classDef inputStyle fill:#ffffff,stroke:#64748b,stroke-width:1.5px,color:#0f172a;
+    classDef agentStyle fill:#1d4ed8,stroke:#172554,stroke-width:2.5px,color:#ffffff;
+    classDef toolStyle fill:#ffffff,stroke:#2563eb,stroke-width:2px,color:#1b2333;
+    classDef guardStyle fill:#fffbeb,stroke:#d97706,stroke-width:1.5px,color:#92400e;
+    classDef outStyle fill:#f0fdf4,stroke:#16a34a,stroke-width:2px,color:#14532d;
+
+    Input(["Inputs<br/>Artist &amp; Corridor"]):::inputStyle --> Agent((("Roadie Core<br/>Orchestrator"))):::agentStyle
+    
+    subgraph Pipeline ["The 5 Thin Tools Pipeline"]
+        T1(["01 · audience_affinity<br/>Qloo Taste Index"]):::toolStyle
+        T2(["02 · find_venues<br/>Ticketmaster &amp; Tavily"]):::toolStyle
+        T3(["03 · local_taste<br/>Qloo Local Openers"]):::toolStyle
+        T4(["04 · build_route<br/>2-Opt TSP Router"]):::toolStyle
+        T5(["05 · draft_pitch<br/>Promoter Inquiry"]):::toolStyle
+
         T1 --> T2 --> T3 --> T4 --> T5
     end
 
-    subgraph Step4 ["4. Physical Touring Circuit Breakers"]
-        direction LR
-        G1["Daily Transit Limit<br/>Max 320 miles/day (5.5h drive)"]:::guardStyle
-        G2["Band Health & Rest Cadence<br/>Mandatory off-day every 3 shows"]:::guardStyle
-        G3["Market Cannibalization Guard<br/>Min 45 mi radius between stops"]:::guardStyle
-    end
-
-    subgraph Step5 ["5. Verified Tour Execution Artifacts"]
-        direction LR
-        O1["Day-by-Day Van Itinerary<br/>Route sequence & venue times"]:::outStyle
-        O2["Geographic Drive-Time Map<br/>Interactive SVG corridor path"]:::outStyle
-        O3["Data-Backed Promoter Pitch Emails<br/>Citing Qloo index & opener synergies"]:::outStyle
-    end
-
-    Step1 --> Step2
-    Step2 --> Step3
-    Step3 --> Step4
-    Step4 --> Step5
+    Agent ==> T1
+    T5 ==> Guards(["Circuit Breakers<br/>≤320mi • 3:1 Rest"]):::guardStyle
+    Guards ==> Output(["Verified Output<br/>Master Tour Sheets"]):::outStyle
 `;
 
 export const ArchitectureView: React.FC = () => {
+  const [activeDiagram, setActiveDiagram] = useState<'round' | 'pipeline'>('round');
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '28px' }}>
       {/* Intro Header */}
@@ -77,18 +114,38 @@ export const ArchitectureView: React.FC = () => {
 
       {/* Interactive Mermaid Diagram */}
       <div className="card-paper">
-        <div style={{ marginBottom: '14px', display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', borderBottom: '1px solid var(--rule)', paddingBottom: '10px' }}>
+        <div style={{ marginBottom: '14px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px', borderBottom: '1px solid var(--rule)', paddingBottom: '12px' }}>
           <div>
             <span className="ov" style={{ marginBottom: '2px' }}>Formal Topology</span>
             <h3 style={{ fontSize: '16px', fontWeight: 500, color: 'var(--ink)', margin: 0 }}>
-              System Architecture Diagram
+              Agent Architecture &amp; Tool Orbit Diagram
             </h3>
           </div>
-          <span style={{ fontSize: '12px', color: 'var(--ink-3)' }}>
-            Interactive Mermaid rendering • Click &apos;Raw Definition&apos; to inspect source
-          </span>
+
+          {/* View Mode Toggle */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <span style={{ fontSize: '11px', color: 'var(--ink-3)', marginRight: '4px' }}>Topology View:</span>
+            <button
+              type="button"
+              onClick={() => setActiveDiagram('round')}
+              className={`segmented-pill ${activeDiagram === 'round' ? 'active' : ''}`}
+              style={{ display: 'flex', alignItems: 'center', gap: '5px', padding: '4px 10px', fontSize: '11.5px' }}
+            >
+              <Orbit size={12} />
+              <span>Round Agent Orbit</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveDiagram('pipeline')}
+              className={`segmented-pill ${activeDiagram === 'pipeline' ? 'active' : ''}`}
+              style={{ display: 'flex', alignItems: 'center', gap: '5px', padding: '4px 10px', fontSize: '11.5px' }}
+            >
+              <GitCommit size={12} />
+              <span>Linear Pipeline</span>
+            </button>
+          </div>
         </div>
-        <MermaidDiagram chart={AGENT_MERMAID_CHART} />
+        <MermaidDiagram chart={activeDiagram === 'round' ? ROUND_AGENT_MERMAID_CHART : PIPELINE_MERMAID_CHART} />
       </div>
 
       {/* The 5 Thin Tools Specification */}
